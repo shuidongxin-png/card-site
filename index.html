@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="税冬鑫的个人主页，展示 QQ 名片、联系方式、登录注册演示、私信留言和部署学习路线。"
+    />
+    <title>税冬鑫 | 晓染的个人主页</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-one"></div>
+    <div class="bg-glow bg-glow-two"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top">税冬鑫</a>
+      <nav aria-label="主导航">
+        <a href="#qq">QQ 主页</a>
+        <a href="#account">登录</a>
+        <a href="#messages">私信</a>
+        <a href="#skills">技能</a>
+        <a href="#awards">奖项</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">晓染 / QQ 3265176894 / Scorpio</p>
+          <h1>你好，我是税冬鑫。这里是我的个人主页。</h1>
+          <p class="intro">
+            欢迎来到我的线上名片。这里放了 QQ 主页、联系方式、私信留言、
+            背景音乐和一点微互动。以后还可以继续扩展成博客、作品集或真正的社交小站。
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#messages">给我留言</a>
+            <a class="button secondary" href="#skills">看看技能</a>
+          </div>
+        </div>
+
+        <aside class="profile-card" aria-label="个人信息卡片">
+          <div class="avatar-wrap">
+            <img src="assets/qq-homepage.jpg" alt="税冬鑫 QQ 主页头像截图" />
+          </div>
+          <div>
+            <h2>税冬鑫</h2>
+            <p>昵称：晓染</p>
+            <p>QQ：3265176894</p>
+            <p>微信：sdx20039</p>
+          </div>
+          <ul class="quick-links">
+            <li><a href="mailto:3265176894@qq.com">3265176894@qq.com</a></li>
+            <li><button class="text-button" data-copy="3265176894">复制 QQ</button></li>
+            <li><button class="text-button" data-copy="sdx20039">复制微信</button></li>
+          </ul>
+          <p id="copyStatus" class="status" role="status" aria-live="polite"></p>
+        </aside>
+      </section>
+
+      <section class="music-player" aria-label="背景音乐播放器">
+        <div>
+          <p class="eyebrow">Background Music</p>
+          <h2>红色高跟鞋</h2>
+          <p>
+            把你自己的音频文件放到
+            <code>assets/red-high-heels.mp3</code>，这里就会播放。
+          </p>
+        </div>
+        <audio controls loop preload="none">
+          <source src="assets/red-high-heels.mp3" type="audio/mpeg" />
+          你的浏览器不支持音频播放。
+        </audio>
+      </section>
+
+      <section id="qq" class="section qq-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">QQ Profile</p>
+            <h2>我的 QQ 主页</h2>
+          </div>
+          <p class="section-note">截图来自你提供的图片，后续可换成更高清版本。</p>
+        </div>
+        <div class="qq-frame">
+          <img src="assets/qq-homepage.jpg" alt="税冬鑫的 QQ 主页截图" />
+        </div>
+      </section>
+
+      <section id="account" class="section split">
+        <div>
+          <p class="eyebrow">Account Demo</p>
+          <h2>注册登录演示</h2>
+          <p class="muted">
+            这是前端演示版，会把账号临时保存在当前浏览器里。真正上线给别人用时，
+            需要服务器、数据库、密码加密和短信/邮箱验证。
+          </p>
+          <p class="muted">
+            现在的规则是：先注册，再登录，登录后才能发送留言。
+          </p>
+        </div>
+
+        <div class="panel">
+          <div class="tabs" role="tablist" aria-label="账号表单">
+            <button class="tab active" type="button" data-tab="login">登录</button>
+            <button class="tab" type="button" data-tab="register">注册</button>
+          </div>
+
+          <form id="loginForm" class="account-form">
+            <label>
+              QQ 或邮箱
+              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" />
+            </label>
+            <label>
+              密码
+              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+            </label>
+            <button class="button primary" type="submit">登录</button>
+          </form>
+
+          <form id="registerForm" class="account-form hidden">
+            <label>
+              昵称
+              <input name="nickname" autocomplete="nickname" placeholder="你的昵称" />
+            </label>
+            <label>
+              邮箱
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              密码
+              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" />
+            </label>
+            <button class="button primary" type="submit">创建账号</button>
+          </form>
+
+          <p id="accountStatus" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section id="messages" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Private Message</p>
+            <h2>私信留言</h2>
+          </div>
+          <p class="section-note">登录后才能留言；当前留言仍是本地演示版。</p>
+        </div>
+
+        <div class="message-layout">
+          <form id="messageForm" class="panel message-form">
+            <p id="messageGate" class="gate">请先在上方登录，登录后这里会开放留言。</p>
+            <label>
+              你的名字
+              <input name="name" placeholder="比如：朋友 A" disabled />
+            </label>
+            <label>
+              留言内容
+              <textarea name="message" rows="5" placeholder="想对税冬鑫说点什么？" disabled></textarea>
+            </label>
+            <button class="button primary" type="submit" disabled>发送私信</button>
+          </form>
+
+          <div class="panel">
+            <h3>最新留言</h3>
+            <div id="messageList" class="message-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="skills" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Skills</p>
+            <h2>我的技能</h2>
+          </div>
+          <p class="section-note">海报制作、平面设计、版式表达和空间图纸整理。</p>
+        </div>
+
+        <div class="showcase-grid skill-grid">
+          <article class="showcase-card featured-skill">
+            <img src="assets/skill-1.jpg" alt="圣诞主题海报作品" />
+            <div>
+              <span class="tag">海报制作</span>
+              <h3>节日主题视觉海报</h3>
+              <p>能根据活动主题组织画面、文字层级和色彩氛围，让信息更醒目。</p>
+            </div>
+          </article>
+          <article class="showcase-card">
+            <img src="assets/skill-2.jpg" alt="智慧抗衰主题演示页面" />
+            <div>
+              <span class="tag">平面设计</span>
+              <h3>商业信息排版</h3>
+              <p>适合做宣传页、PPT 页面、项目介绍图，重点突出、阅读节奏清楚。</p>
+            </div>
+          </article>
+          <article class="showcase-card">
+            <img src="assets/skill-3.jpg" alt="美容项目宣传海报" />
+            <div>
+              <span class="tag">平面设计</span>
+              <h3>宣传物料设计</h3>
+              <p>能把图片、卖点和说明文字整合到统一风格里，适合线下展示。</p>
+            </div>
+          </article>
+          <article class="showcase-card">
+            <img src="assets/skill-4.jpg" alt="空间平面图纸" />
+            <div>
+              <span class="tag">图纸整理</span>
+              <h3>平面布局表达</h3>
+              <p>能整理空间尺寸和功能分区，让布局信息更直观、方便沟通。</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="awards" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Awards</p>
+            <h2>我的奖项</h2>
+          </div>
+          <p class="section-note">证书只展示，不额外展开介绍。</p>
+        </div>
+
+        <div class="showcase-grid award-grid">
+          <article class="showcase-card award-card">
+            <img src="assets/award-1.jpg" alt="英语四级成绩截图" />
+            <h3>英语四级成绩</h3>
+          </article>
+          <article class="showcase-card award-card">
+            <img src="assets/award-2.jpg" alt="优秀个人荣誉证书" />
+            <h3>优秀个人</h3>
+          </article>
+          <article class="showcase-card award-card">
+            <img src="assets/award-3.jpg" alt="中国国际大学生创新大赛证书" />
+            <h3>创新大赛高教主赛道银奖</h3>
+          </article>
+          <article class="showcase-card award-card">
+            <img src="assets/award-4.jpg" alt="蓝桥杯获奖证书" />
+            <h3>蓝桥杯 C/C++ 程序设计三等奖</h3>
+          </article>
+          <article class="showcase-card award-card">
+            <img src="assets/award-5.jpg" alt="春日光影故事征文优秀作品奖证书" />
+            <h3>春日光影故事优秀作品奖</h3>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
+      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
