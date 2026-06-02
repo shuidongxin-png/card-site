@@ -7,7 +7,7 @@
       name="description"
       content="税冬鑫的个人主页，展示 QQ 名片、联系方式、登录注册演示、私信留言和部署学习路线。"
     />
-    <title>税冬鑫 | 晓染的个人主页</title>
+    <title>xiaoran</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -29,10 +29,9 @@
       <section class="hero">
         <div class="hero-copy">
           <p class="eyebrow">晓染 / QQ 3265176894 / Scorpio</p>
-          <h1>你好，我是税冬鑫。这里是我的个人主页。</h1>
+          <h2>欢迎光临</h2>
           <p class="intro">
-            欢迎来到我的线上名片。这里放了 QQ 主页、联系方式、私信留言、
-            背景音乐和一点微互动。以后还可以继续扩展成博客、作品集或真正的社交小站。
+            欢迎来到我的线上名片。
           </p>
           <div class="actions">
             <a class="button primary" href="#messages">给我留言</a>
@@ -42,7 +41,7 @@
 
         <aside class="profile-card" aria-label="个人信息卡片">
           <div class="avatar-wrap">
-            <img src="assets/qq-homepage.jpg" alt="税冬鑫 QQ 主页头像截图" />
+            <img src="assets/avatar.jpg" alt="税冬鑫头像" />
           </div>
           <div>
             <h2>税冬鑫</h2>
@@ -64,14 +63,17 @@
           <p class="eyebrow">Background Music</p>
           <h2>红色高跟鞋</h2>
           <p>
-            把你自己的音频文件放到
-            <code>assets/red-high-heels.mp3</code>，这里就会播放。
+            页面会尝试自动播放。若浏览器拦截，点击页面任意位置或下面按钮即可播放。
           </p>
         </div>
-        <audio controls loop preload="none">
-          <source src="assets/red-high-heels.mp3" type="audio/mpeg" />
-          你的浏览器不支持音频播放。
-        </audio>
+        <div class="audio-box">
+          <audio id="bgMusic" controls loop preload="auto" playsinline>
+            <source src="assets/red-high-heels.mp3" type="audio/mpeg" />
+            你的浏览器不支持音频播放。
+          </audio>
+          <button id="musicToggle" class="button secondary" type="button">播放音乐</button>
+          <p id="musicStatus" class="mini-status" role="status" aria-live="polite"></p>
+        </div>
       </section>
 
       <section id="qq" class="section qq-section">
@@ -90,7 +92,7 @@
       <section id="account" class="section split">
         <div>
           <p class="eyebrow">Account Demo</p>
-          <h2>注册登录演示</h2>
+          <h2>注册登录</h2>
           <p class="muted">
             这是前端演示版，会把账号临时保存在当前浏览器里。真正上线给别人用时，
             需要服务器、数据库、密码加密和短信/邮箱验证。

@@ -8,6 +8,9 @@ const accountStatus = document.querySelector("#accountStatus");
 const messageForm = document.querySelector("#messageForm");
 const messageList = document.querySelector("#messageList");
 const messageGate = document.querySelector("#messageGate");
+const bgMusic = document.querySelector("#bgMusic");
+const musicToggle = document.querySelector("#musicToggle");
+const musicStatus = document.querySelector("#musicStatus");
 let currentUser = JSON.parse(localStorage.getItem("card-site-session") || "null");
 
 const defaultMessages = [
@@ -20,6 +23,8 @@ const defaultMessages = [
 
 year.textContent = new Date().getFullYear();
 updateMessageGate();
+setupMusic();
+setupReveal();
 
 copyButtons.forEach((button) => {
   button.addEventListener("click", async () => {
@@ -174,3 +179,95 @@ messageForm.addEventListener("submit", (event) => {
 });
 
 renderMessages();
+
+function setupMusic() {
+  if (!bgMusic || !musicToggle || !musicStatus) {
+    return;
+  }
+
+  let soundUnlocked = false;
+
+  const updateMusicText = () => {
+    musicToggle.textContent = bgMusic.paused ? "播放音乐" : "暂停音乐";
+  };
+
+  const playWithSound = async () => {
+    try {
+      bgMusic.muted = false;
+      await bgMusic.play();
+      soundUnlocked = true;
+      musicStatus.textContent = "音乐播放中";
+    } catch {
+      musicStatus.textContent = "浏览器拦截了自动播放，点一下页面或按钮即可播放。";
+    } finally {
+      updateMusicText();
+    }
+  };
+
+  const tryAutoplay = async () => {
+    try {
+      bgMusic.volume = 0.72;
+      await bgMusic.play();
+      musicStatus.textContent = "音乐播放中";
+    } catch {
+      try {
+        bgMusic.muted = true;
+        await bgMusic.play();
+        musicStatus.textContent = "已静音预载，点一下页面后会打开声音。";
+      } catch {
+        musicStatus.textContent = "点一下页面或按钮播放音乐。";
+      }
+    } finally {
+      updateMusicText();
+    }
+  };
+
+  musicToggle.addEventListener("click", async () => {
+    if (bgMusic.paused) {
+      await playWithSound();
+    } else {
+      bgMusic.pause();
+      musicStatus.textContent = "音乐已暂停";
+      updateMusicText();
+    }
+  });
+
+  document.addEventListener(
+    "pointerdown",
+    () => {
+      if (!soundUnlocked) {
+        playWithSound();
+      }
+    },
+    { once: true }
+  );
+
+  bgMusic.addEventListener("play", updateMusicText);
+  bgMusic.addEventListener("pause", updateMusicText);
+  tryAutoplay();
+}
+
+function setupReveal() {
+  const items = document.querySelectorAll(".music-player, .section");
+
+  if (!("IntersectionObserver" in window)) {
+    items.forEach((item) => item.classList.add("is-visible"));
+    return;
+  }
+
+  items.forEach((item) => item.classList.add("reveal"));
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.16, rootMargin: "0px 0px -80px 0px" }
+  );
+
+  items.forEach((item) => observer.observe(item));
+}
