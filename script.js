@@ -185,42 +185,36 @@ function setupMusic() {
     return;
   }
 
-  let soundUnlocked = false;
+  let hasLoadedMusic = false;
 
   const updateMusicText = () => {
     musicToggle.textContent = bgMusic.paused ? "播放音乐" : "暂停音乐";
   };
 
+  const ensureMusicLoaded = () => {
+    if (hasLoadedMusic) {
+      return;
+    }
+
+    bgMusic.load();
+    hasLoadedMusic = true;
+  };
+
   const playWithSound = async () => {
     try {
+      ensureMusicLoaded();
       bgMusic.muted = false;
       await bgMusic.play();
-      soundUnlocked = true;
       musicStatus.textContent = "音乐播放中";
     } catch {
-      musicStatus.textContent = "浏览器拦截了自动播放，点一下页面或按钮即可播放。";
+      musicStatus.textContent = "浏览器拦截了自动播放，请点播放按钮。";
     } finally {
       updateMusicText();
     }
   };
 
-  const tryAutoplay = async () => {
-    try {
-      bgMusic.volume = 0.72;
-      await bgMusic.play();
-      musicStatus.textContent = "音乐播放中";
-    } catch {
-      try {
-        bgMusic.muted = true;
-        await bgMusic.play();
-        musicStatus.textContent = "已静音预载，点一下页面后会打开声音。";
-      } catch {
-        musicStatus.textContent = "点一下页面或按钮播放音乐。";
-      }
-    } finally {
-      updateMusicText();
-    }
-  };
+  bgMusic.volume = 0.72;
+  musicStatus.textContent = "正在尝试自动播放音乐。";
 
   musicToggle.addEventListener("click", async () => {
     if (bgMusic.paused) {
@@ -232,19 +226,17 @@ function setupMusic() {
     }
   });
 
-  document.addEventListener(
-    "pointerdown",
-    () => {
-      if (!soundUnlocked) {
-        playWithSound();
-      }
-    },
-    { once: true }
-  );
-
   bgMusic.addEventListener("play", updateMusicText);
   bgMusic.addEventListener("pause", updateMusicText);
-  tryAutoplay();
+  updateMusicText();
+
+  window.addEventListener("pointerdown", () => {
+    if (bgMusic.paused) {
+      playWithSound();
+    }
+  }, { once: true });
+
+  window.setTimeout(playWithSound, 500);
 }
 
 function setupReveal() {
