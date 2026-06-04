@@ -63,6 +63,18 @@ body::before {
   background-size: 46px 46px;
 }
 
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(247, 251, 255, 0.72), rgba(247, 251, 255, 0.34)),
+    url("assets/site-bg-mobile.jpg") right center / min(72vw, 520px) auto no-repeat;
+  opacity: 0.42;
+}
+
 a {
   color: inherit;
 }
@@ -565,9 +577,29 @@ button:disabled {
   border: 1px solid rgba(72, 48, 33, 0.1);
 }
 
+.message-meta {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .message-item strong,
 .message-item small {
   display: block;
+}
+
+.message-delete {
+  flex: 0 0 auto;
+  border: 1px solid rgba(47, 128, 200, 0.18);
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: rgba(247, 251, 255, 0.7);
+  color: var(--rose-dark);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
 }
 
 .message-item small {

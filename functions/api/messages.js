@@ -2,7 +2,7 @@ import { getCurrentUser, json, normalizeText, readJson } from "../_lib/auth.js";
 
 export async function onRequestGet({ env }) {
   const result = await env.DB.prepare(
-    `SELECT messages.id, messages.name, messages.message, messages.created_at,
+    `SELECT messages.id, messages.user_id, messages.name, messages.message, messages.created_at,
             users.nickname, users.email
      FROM messages
      LEFT JOIN users ON users.id = messages.user_id
@@ -16,6 +16,7 @@ export async function onRequestGet({ env }) {
       name: item.name || item.nickname || maskEmail(item.email) || "访客",
       message: item.message,
       time: formatTime(item.created_at),
+      userId: item.user_id,
     })),
   });
 }
@@ -45,6 +46,31 @@ export async function onRequestPost({ request, env }) {
     .run();
 
   return json({ ok: true }, 201);
+}
+
+export async function onRequestDelete({ request, env }) {
+  const user = await getCurrentUser(env, request);
+
+  if (!user) {
+    return json({ error: "请先登录。" }, 401);
+  }
+
+  const url = new URL(request.url);
+  const id = Number(url.searchParams.get("id"));
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return json({ error: "留言不存在。" }, 400);
+  }
+
+  const result = await env.DB.prepare("DELETE FROM messages WHERE id = ? AND user_id = ?")
+    .bind(id, user.id)
+    .run();
+
+  if (!result.meta.changes) {
+    return json({ error: "只能删除自己发布的留言。" }, 403);
+  }
+
+  return json({ ok: true });
 }
 
 function formatTime(value) {

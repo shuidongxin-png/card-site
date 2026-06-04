@@ -359,6 +359,8 @@ async function setupMessages() {
       if (!backendAvailable || error.isNetwork) {
         const messages = getLocalMessages();
         messages.unshift({
+          id: Date.now(),
+          userId: currentUser.id || "local",
           name,
           message,
           time: new Date().toLocaleString("zh-CN", {
@@ -417,13 +419,24 @@ async function renderMessages() {
     .map(
       (item) => `
         <article class="message-item">
-          <strong>${escapeHtml(item.name)}</strong>
-          <small>${escapeHtml(item.time)}</small>
+          <div class="message-meta">
+            <div>
+              <strong>${escapeHtml(item.name)}</strong>
+              <small>${escapeHtml(item.time)}</small>
+            </div>
+            ${canDeleteMessage(item) ? `<button class="message-delete" type="button" data-delete-message="${escapeHtml(item.id)}">删除</button>` : ""}
+          </div>
           <p>${escapeHtml(item.message)}</p>
         </article>
       `
     )
     .join("");
+
+  messageList.querySelectorAll("[data-delete-message]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      await deleteMessage(button.dataset.deleteMessage);
+    });
+  });
 }
 
 async function getMessages() {
@@ -442,6 +455,36 @@ function getLocalMessages() {
 
 function saveLocalMessages(messages) {
   localStorage.setItem("card-site-messages", JSON.stringify(messages));
+}
+
+function canDeleteMessage(item) {
+  if (!currentUser || !item.id) {
+    return false;
+  }
+
+  return !item.userId || item.userId === currentUser.id || item.userId === "local";
+}
+
+async function deleteMessage(id) {
+  const messageGate = document.querySelector("#messageGate");
+
+  try {
+    await apiFetch(`/api/messages?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+  } catch (error) {
+    if (!backendAvailable || error.isNetwork) {
+      const messages = getLocalMessages().filter((item) => String(item.id) !== String(id));
+      saveLocalMessages(messages);
+    } else {
+      if (messageGate) {
+        messageGate.textContent = error.message;
+      }
+      return;
+    }
+  }
+
+  await renderMessages();
 }
 
 function saveLocalUser(user) {
