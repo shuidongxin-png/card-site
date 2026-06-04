@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -14,28 +14,31 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html">晓染</a>
+      <a class="brand" href="#home" data-page="index.html">晓染</a>
       <nav aria-label="主导航">
-        <a href="index.html">首页</a>
-        <a href="qq.html">QQ 主页</a>
-        <a href="account.html">登录</a>
-        <a href="messages.html">私信</a>
-        <a href="skills.html">技能</a>
-        <a href="awards.html">奖状</a>
+        <a href="#home" data-page="index.html">首页</a>
+        <a href="#qq" data-page="qq.html">QQ 主页</a>
+        <a href="#account" data-page="account.html">登录</a>
+        <a href="#messages" data-page="messages.html">私信</a>
+        <a href="#skills" data-page="skills.html">技能</a>
+        <a href="#awards" data-page="awards.html">奖状</a>
       </nav>
     </header>
 
     <main id="top" class="home-main">
       <section class="hero" aria-label="个人主页首屏">
-        <img
-          class="hero-bg"
-          src="assets/site-bg.jpg"
-          alt=""
-          width="1200"
-          height="1670"
-          fetchpriority="high"
-          decoding="async"
-        />
+        <picture>
+          <source media="(max-width: 620px)" srcset="assets/site-bg-mobile.jpg" />
+          <img
+            class="hero-bg"
+            src="assets/site-bg.jpg"
+            alt=""
+            width="1200"
+            height="1670"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </picture>
         <div class="hero-shade"></div>
         <div class="hero-inner">
           <div class="hero-copy">
@@ -43,8 +46,8 @@
             <h1>晓染</h1>
             <p class="intro">欢迎来到我的线上名片。</p>
             <div class="actions">
-              <a class="button primary" href="messages.html">给我留言</a>
-              <a class="button secondary" href="skills.html">看看技能</a>
+              <a class="button primary" href="#messages" data-page="messages.html">给我留言</a>
+              <a class="button secondary" href="#skills" data-page="skills.html">看看技能</a>
             </div>
           </div>
 
@@ -80,7 +83,6 @@
         <div>
           <p class="eyebrow">Background Music</p>
           <h2>红色高跟鞋</h2>
-          <p>页面会尝试自动播放。若浏览器拦截，点击页面任意位置或下面按钮即可播放。</p>
         </div>
         <div class="audio-box">
           <audio id="bgMusic" controls loop preload="none" playsinline>

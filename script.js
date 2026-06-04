@@ -60,11 +60,11 @@ function setupClientNavigation() {
     }
 
     event.preventDefault();
-    await navigateTo(link.getAttribute("href"));
+    await navigateTo(link.dataset.page || link.getAttribute("href"));
   });
 
   window.addEventListener("popstate", async () => {
-    await navigateTo(location.pathname.split("/").pop() || "index.html", { push: false });
+    await navigateTo(getPageFromHash() || "index.html", { push: false });
   });
 }
 
@@ -72,11 +72,12 @@ function isInternalPageLink(link) {
   const href = link.getAttribute("href");
 
   return (
-    href &&
+    link.dataset.page ||
+    (href &&
     !href.startsWith("#") &&
     !href.startsWith("mailto:") &&
     !href.startsWith("http") &&
-    href.endsWith(".html")
+    href.endsWith(".html"))
   );
 }
 
@@ -98,7 +99,7 @@ async function navigateTo(page, options = {}) {
     currentMain.replaceWith(nextMain);
 
     if (options.push !== false) {
-      history.pushState({}, "", normalizedPage);
+      history.pushState({}, "", getHashForPage(normalizedPage));
     }
 
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -107,6 +108,32 @@ async function navigateTo(page, options = {}) {
   } catch {
     location.href = normalizedPage;
   }
+}
+
+function getPageFromHash() {
+  const map = {
+    "#home": "index.html",
+    "#qq": "qq.html",
+    "#account": "account.html",
+    "#messages": "messages.html",
+    "#skills": "skills.html",
+    "#awards": "awards.html",
+  };
+
+  return map[location.hash] || "";
+}
+
+function getHashForPage(page) {
+  const map = {
+    "index.html": "#home",
+    "qq.html": "#qq",
+    "account.html": "#account",
+    "messages.html": "#messages",
+    "skills.html": "#skills",
+    "awards.html": "#awards",
+  };
+
+  return map[page] || "#home";
 }
 
 async function fetchPage(page) {
@@ -128,17 +155,19 @@ async function fetchPage(page) {
 function prefetchPages() {
   const pages = ["index.html", "qq.html", "account.html", "messages.html", "skills.html", "awards.html"];
 
-  if (!("requestIdleCallback" in window)) {
-    return;
-  }
-
-  requestIdleCallback(() => {
+  const run = () => {
     pages.forEach((page) => {
       if (!pageCache.has(page)) {
         fetchPage(page).catch(() => {});
       }
     });
-  });
+  };
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(run, { timeout: 1200 });
+  } else {
+    window.setTimeout(run, 600);
+  }
 }
 
 function setupActiveNav() {
