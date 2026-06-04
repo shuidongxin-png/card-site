@@ -8,7 +8,7 @@
       content="晓染的个人名片主页，包含个人信息、联系方式和背景音乐。"
     />
     <title>晓染 - 个人名片</title>
-    <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
+    <link rel="preload" href="assets/site-bg-fixed.jpg" as="image" />
     <link rel="preload" href="assets/avatar.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -27,18 +27,6 @@
 
     <main id="top" class="home-main">
       <section class="hero" aria-label="个人主页首屏">
-        <picture>
-          <source media="(max-width: 620px)" srcset="assets/site-bg-mobile-v3.jpg" />
-          <img
-            class="hero-bg"
-            src="assets/site-bg-v3.jpg"
-            alt=""
-            width="1200"
-            height="1670"
-            fetchpriority="high"
-            decoding="async"
-          />
-        </picture>
         <div class="hero-shade"></div>
         <div class="hero-inner">
           <div class="hero-copy">
