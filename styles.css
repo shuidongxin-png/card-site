@@ -56,7 +56,7 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.38;
+  opacity: 0.18;
   background-image:
     linear-gradient(rgba(30, 78, 120, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(30, 78, 120, 0.032) 1px, transparent 1px);
@@ -70,9 +70,9 @@ body::after {
   z-index: -2;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(247, 251, 255, 0.78), rgba(247, 251, 255, 0.22)),
+    linear-gradient(90deg, rgba(247, 251, 255, 0.62), rgba(247, 251, 255, 0.08)),
     url("assets/site-bg-fixed.jpg") center center / cover no-repeat;
-  opacity: 0.74;
+  opacity: 0.9;
 }
 
 a {
@@ -207,8 +207,8 @@ main {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(247, 251, 255, 0.44) 0%, rgba(230, 243, 250, 0.22) 42%, rgba(247, 251, 255, 0.02) 78%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(207, 229, 242, 0.18));
+    linear-gradient(90deg, rgba(247, 251, 255, 0.34) 0%, rgba(247, 251, 255, 0.12) 42%, rgba(247, 251, 255, 0.01) 78%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.01), rgba(247, 251, 255, 0.08));
 }
 
 .hero-inner {
@@ -773,10 +773,10 @@ footer p {
 @media (max-width: 620px) {
   body::after {
     background:
-      linear-gradient(180deg, rgba(247, 251, 255, 0.72), rgba(247, 251, 255, 0.22) 42%, rgba(230, 240, 248, 0.36)),
-      linear-gradient(90deg, rgba(247, 251, 255, 0.62), rgba(247, 251, 255, 0.08)),
-      url("assets/site-bg-fixed-mobile.jpg") center top / cover no-repeat;
-    opacity: 0.82;
+      linear-gradient(180deg, rgba(247, 251, 255, 0.44), rgba(247, 251, 255, 0.08) 42%, rgba(247, 251, 255, 0.18)),
+      linear-gradient(90deg, rgba(247, 251, 255, 0.32), rgba(247, 251, 255, 0.02)),
+      url("assets/site-bg-fixed-mobile.jpg") center 54px / cover no-repeat;
+    opacity: 0.98;
   }
 
   main,
