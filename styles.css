@@ -70,9 +70,9 @@ body::after {
   z-index: -2;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(247, 251, 255, 0.72), rgba(247, 251, 255, 0.34)),
-    url("assets/site-bg-mobile.jpg") right center / min(72vw, 520px) auto no-repeat;
-  opacity: 0.42;
+    linear-gradient(90deg, rgba(247, 251, 255, 0.7), rgba(247, 251, 255, 0.28)),
+    url("assets/site-bg-v3.jpg") center center / cover no-repeat;
+  opacity: 0.46;
 }
 
 a {
@@ -197,10 +197,10 @@ main {
 
 .hero-bg {
   object-fit: cover;
-  object-position: 70% 26%;
-  filter: brightness(1.18) contrast(1.06) saturate(1.08);
-  transform: scale(1.04);
-  transform-origin: center 26%;
+  object-position: center center;
+  filter: brightness(1.1) contrast(1.04) saturate(1.05);
+  transform: scale(1.02);
+  transform-origin: center center;
 }
 
 .hero-shade {
@@ -760,10 +760,18 @@ footer p {
 }
 
 @media (max-width: 620px) {
+  body::after {
+    background:
+      linear-gradient(90deg, rgba(247, 251, 255, 0.7), rgba(247, 251, 255, 0.22)),
+      url("assets/site-bg-mobile-v3.jpg") right top / cover no-repeat;
+    opacity: 0.52;
+  }
+
   main,
   .hero-inner,
   .music-player {
-    width: min(100% - 28px, 1160px);
+    width: calc(100% - 28px);
+    max-width: 1160px;
   }
 
   .site-header {
@@ -785,8 +793,8 @@ footer p {
   }
 
   .hero-bg {
-    object-position: 62% 28%;
-    filter: brightness(1.3) contrast(1.04) saturate(1.08);
+    object-position: 58% 20%;
+    filter: brightness(1.16) contrast(1.03) saturate(1.04);
   }
 
   .hero-shade {
@@ -864,5 +872,16 @@ footer p {
   .showcase-grid,
   .skill-grid {
     columns: 1;
+  }
+
+  .section {
+    overflow: hidden;
+  }
+
+  .panel,
+  .message-form,
+  input,
+  textarea {
+    min-width: 0;
   }
 }
