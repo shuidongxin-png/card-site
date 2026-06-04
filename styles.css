@@ -1,6 +1,6 @@
 @font-face {
   font-family: "YousheTitle";
-  src: url("assets/fonts/youshe-title.otf") format("opentype");
+  src: url("assets/fonts/youshe-title-subset.woff2") format("woff2");
   font-display: swap;
 }
 
@@ -816,9 +816,17 @@ footer p {
   }
 
   .floating-music {
-    right: 14px;
-    bottom: 14px;
+    right: 12px;
+    bottom: 12px;
     max-width: calc(100vw - 28px);
+    padding: 6px;
+  }
+
+  .floating-music .button {
+    min-height: 32px;
+    width: auto;
+    padding: 6px 10px;
+    font-size: 13px;
   }
 
   .showcase-grid,

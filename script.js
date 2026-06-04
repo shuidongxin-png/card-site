@@ -546,17 +546,6 @@ function setupMusicControls() {
     persistentMusic.addEventListener("pause", updateMusicControls);
   }
   updateMusicControls();
-
-  if (!triedAutoplay) {
-    triedAutoplay = true;
-    window.setTimeout(() => {
-      if (localStorage.getItem("card-site-music-playing") !== "false") {
-        playMusic();
-      }
-    }, 500);
-  }
-
-  bindPointerResume();
 }
 
 function ensureFloatingMusicControls() {
@@ -632,7 +621,7 @@ function bindPointerResume() {
 
   pointerResumeBound = true;
   window.addEventListener("pointerdown", () => {
-    if (persistentMusic.paused && localStorage.getItem("card-site-music-playing") !== "false") {
+    if (persistentMusic.paused && localStorage.getItem("card-site-music-playing") === "true") {
       playMusic();
     }
   });
