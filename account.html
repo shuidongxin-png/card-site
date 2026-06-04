@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="登录或注册后进入晓染个人主页留言区。" />
+    <title>晓染 - 登录</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">晓染</a>
+      <nav aria-label="主导航">
+        <a href="index.html">首页</a>
+        <a href="qq.html">QQ 主页</a>
+        <a href="account.html">登录</a>
+        <a href="messages.html">私信</a>
+        <a href="skills.html">技能</a>
+        <a href="awards.html">奖状</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section id="account" class="section split">
+        <div class="section-copy">
+          <p class="eyebrow">Account</p>
+          <h1>注册登录</h1>
+          <a class="inline-link" href="messages.html">前往私信页面</a>
+        </div>
+
+        <div class="panel">
+          <div class="tabs" role="tablist" aria-label="账号表单">
+            <button class="tab active" type="button" data-tab="login">登录</button>
+            <button class="tab" type="button" data-tab="register">注册</button>
+          </div>
+
+          <form id="loginForm" class="account-form">
+            <label>
+              QQ 或邮箱
+              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" />
+            </label>
+            <label>
+              密码
+              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+            </label>
+            <button class="button primary" type="submit">登录</button>
+          </form>
+
+          <form id="registerForm" class="account-form hidden">
+            <label>
+              昵称
+              <input name="nickname" autocomplete="nickname" placeholder="你的昵称" />
+            </label>
+            <label>
+              邮箱
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              密码
+              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" />
+            </label>
+            <button class="button primary" type="submit">创建账号</button>
+          </form>
+
+          <p id="accountStatus" class="status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
+      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

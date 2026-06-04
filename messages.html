@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="登录后给晓染发送私信留言。" />
+    <title>晓染 - 私信</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">晓染</a>
+      <nav aria-label="主导航">
+        <a href="index.html">首页</a>
+        <a href="qq.html">QQ 主页</a>
+        <a href="account.html">登录</a>
+        <a href="messages.html">私信</a>
+        <a href="skills.html">技能</a>
+        <a href="awards.html">奖状</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section id="messages" class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Private Message</p>
+            <h1>私信留言</h1>
+          </div>
+        </div>
+
+        <div class="message-layout">
+          <form id="messageForm" class="panel message-form">
+            <p id="messageGate" class="gate">请先在登录页注册或登录，登录后这里会开放留言。</p>
+            <label>
+              你的名字
+              <input name="name" placeholder="比如：朋友 A" disabled />
+            </label>
+            <label>
+              留言内容
+              <textarea name="message" rows="5" placeholder="想对税冬鑫说点什么？" disabled></textarea>
+            </label>
+            <button class="button primary" type="submit" disabled>发送私信</button>
+          </form>
+
+          <div class="panel">
+            <h2>最新留言</h2>
+            <div id="messageList" class="message-list"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
+      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

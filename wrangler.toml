@@ -1,0 +1,7 @@
+name = "card-site"
+compatibility_date = "2026-06-04"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "card_site_db"
+database_id = "dd23191e-87d4-4804-b066-d1ac98fd5743"
