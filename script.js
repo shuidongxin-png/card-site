@@ -1,6 +1,9 @@
 let currentUser = JSON.parse(localStorage.getItem("card-site-session") || "null");
 let backendAvailable = true;
 let sessionReady = false;
+let adminAccess = false;
+let adminAccessCheckedFor = "";
+let adminAccessChecking = false;
 
 const pageCache = new Map();
 const persistentMusic = new Audio("assets/bg-music.mp3");
@@ -89,6 +92,11 @@ function setupClientNavigation() {
 
 async function handleEntryGate() {
   const currentPage = getCurrentPage();
+
+  if (currentPage === "admin.html" && !currentUser) {
+    await navigateTo("index.html", { replace: true, fullPath: true });
+    return;
+  }
 
   if (currentPage !== "index.html" && !currentUser && !isGuest()) {
     await navigateTo("index.html", { replace: true, fullPath: true });
@@ -304,12 +312,32 @@ function updateNavAuthLink() {
   document.querySelectorAll(".site-header nav").forEach((nav) => {
     let authLink = nav.querySelector("[data-auth-action]");
     const oldEntry = nav.querySelector('a[data-page="index.html"]');
+    let adminLink = nav.querySelector('a[data-page="admin.html"]');
 
     if (!authLink && oldEntry) {
       authLink = oldEntry;
       authLink.dataset.authAction = "logout";
       authLink.removeAttribute("data-page");
       authLink.setAttribute("href", "#logout");
+    }
+
+    if (!adminAccess && adminLink) {
+      adminLink.remove();
+      adminLink = null;
+    }
+
+    if (adminAccess && !adminLink) {
+      adminLink = document.createElement("a");
+      adminLink.href = "#admin";
+      adminLink.dataset.page = "admin.html";
+      adminLink.textContent = "管理";
+      adminLink.setAttribute("aria-label", "进入管理面板");
+
+      if (authLink) {
+        nav.insertBefore(adminLink, authLink);
+      } else {
+        nav.append(adminLink);
+      }
     }
 
     if (!authLink && !document.body.classList.contains("entry-page")) {
@@ -324,6 +352,42 @@ function updateNavAuthLink() {
       authLink.setAttribute("aria-label", currentUser || isGuest() ? "退出登录" : "返回登录入口");
     }
   });
+
+  setupActiveNav();
+  checkAdminAccess();
+}
+
+async function checkAdminAccess() {
+  if (isStaticPreview() || !currentUser || isGuest()) {
+    adminAccess = false;
+    adminAccessCheckedFor = "";
+    return;
+  }
+
+  const email = String(currentUser.email || "").toLowerCase();
+
+  if (!email || adminAccessCheckedFor === email || adminAccessChecking) {
+    return;
+  }
+
+  adminAccessChecking = true;
+
+  try {
+    await apiFetch("/api/admin/summary");
+    adminAccess = true;
+  } catch {
+    adminAccess = false;
+  } finally {
+    adminAccessCheckedFor = email;
+    adminAccessChecking = false;
+    updateNavAuthLink();
+  }
+}
+
+function resetAdminAccess() {
+  adminAccess = false;
+  adminAccessCheckedFor = "";
+  adminAccessChecking = false;
 }
 
 function setupCopyButtons() {
@@ -377,6 +441,7 @@ function setupGuestEntry() {
     button.dataset.bound = "true";
     button.addEventListener("click", () => {
       currentUser = null;
+      resetAdminAccess();
       localStorage.removeItem("card-site-session");
       localStorage.setItem("card-site-guest", "true");
       updateNavAuthLink();
@@ -405,6 +470,7 @@ async function logoutUser() {
   }
 
   currentUser = null;
+  resetAdminAccess();
   localStorage.removeItem("card-site-session");
   localStorage.removeItem("card-site-guest");
   updateNavAuthLink();
@@ -460,6 +526,7 @@ function setupAccountForms() {
       });
 
       currentUser = data.user;
+      resetAdminAccess();
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
       localStorage.removeItem("card-site-guest");
       updateNavAuthLink();
@@ -485,6 +552,7 @@ function setupAccountForms() {
       });
 
       currentUser = data.user;
+      resetAdminAccess();
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
       localStorage.removeItem("card-site-guest");
       updateNavAuthLink();
