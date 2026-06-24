@@ -36,6 +36,7 @@ async function init() {
   }
   sessionReady = true;
   await handleEntryGate();
+  bindPage();
   updateNavAuthLink();
   await setupMessages();
   await routeInitialHash();
@@ -712,6 +713,10 @@ async function setupAdminDashboard() {
   const dashboard = document.querySelector("#adminDashboard");
 
   if (!dashboard) {
+    return;
+  }
+
+  if (!sessionReady) {
     return;
   }
 
