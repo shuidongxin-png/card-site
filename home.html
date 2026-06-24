@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="晓染的个人主页。" />
     <title>晓染 - 首页</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
     <link rel="preload" href="assets/avatar.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
@@ -18,7 +19,7 @@
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
-        <a href="#entry" data-page="index.html">入口</a>
+        <a href="#logout" data-auth-action="logout">登出</a>
       </nav>
     </header>
 
@@ -33,7 +34,7 @@
           <p class="profile-subtitle">税冬鑫</p>
           <div class="profile-contact">
             <div class="signal-pill">微信 sdx20039</div>
-            <button class="button secondary contact-copy" data-copy="sdx20039" type="button">复制微信</button>
+          <button class="button secondary contact-copy" data-copy="sdx20039" type="button" aria-label="复制微信号 sdx20039">复制微信</button>
           </div>
           <p id="copyStatus" class="status" role="status" aria-live="polite"></p>
         </aside>
@@ -79,10 +80,7 @@
           <h2>红色高跟鞋</h2>
         </div>
         <div class="audio-box">
-          <audio id="bgMusic" controls loop autoplay preload="auto" playsinline>
-            <source src="assets/bg-music.mp3" type="audio/mpeg" />
-          </audio>
-          <button id="musicToggle" class="button secondary" type="button">播放音乐</button>
+          <button id="musicToggle" class="button secondary" type="button" aria-label="播放或暂停背景音乐">播放音乐</button>
           <p id="musicStatus" class="mini-status" role="status" aria-live="polite"></p>
         </div>
       </section>

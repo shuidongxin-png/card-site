@@ -1,12 +1,12 @@
 let currentUser = JSON.parse(localStorage.getItem("card-site-session") || "null");
 let backendAvailable = true;
+let sessionReady = false;
 
 const pageCache = new Map();
 const persistentMusic = new Audio("assets/bg-music.mp3");
 persistentMusic.loop = true;
 persistentMusic.preload = "auto";
 persistentMusic.volume = 0.72;
-localStorage.setItem("card-site-music-playing", "true");
 
 let musicEventsBound = false;
 let musicAutoplayTried = false;
@@ -26,8 +26,17 @@ async function init() {
   restoreMusicState();
   setupClientNavigation();
   bindPage();
-  await loadSession();
+  if (!isStaticPreview()) {
+    await loadSession();
+  } else {
+    currentUser = JSON.parse(localStorage.getItem("card-site-session") || "null");
+  }
+  sessionReady = true;
+  await handleEntryGate();
+  updateNavAuthLink();
   await setupMessages();
+  await routeInitialHash();
+  tryAutoplayMusic();
   prefetchPages();
 }
 
@@ -35,9 +44,11 @@ function bindPage() {
   updateBodyStateClasses();
   updateYear();
   setupActiveNav();
+  updateNavAuthLink();
   setupCopyButtons();
   setupAccountForms();
   setupGuestEntry();
+  setupLogout();
   setupMusicControls();
   setupAdminDashboard();
   setupReveal();
@@ -76,8 +87,25 @@ function setupClientNavigation() {
   });
 }
 
+async function handleEntryGate() {
+  const currentPage = getCurrentPage();
+
+  if (currentPage !== "index.html" && !currentUser && !isGuest()) {
+    await navigateTo("index.html", { replace: true, fullPath: true });
+    return;
+  }
+
+  if (currentPage === "index.html" && (currentUser || isGuest())) {
+    await navigateTo("home.html", { replace: true, fullPath: true });
+  }
+}
+
 function isInternalPageLink(link) {
   const href = link.getAttribute("href");
+
+  if (link.dataset.authAction) {
+    return false;
+  }
 
   return (
     link.dataset.page ||
@@ -89,7 +117,7 @@ function isInternalPageLink(link) {
 }
 
 async function navigateTo(page, options = {}) {
-  const normalizedPage = page || "home.html";
+  const normalizedPage = normalizePage(page || "home.html");
 
   try {
     const html = await fetchPage(normalizedPage);
@@ -108,7 +136,11 @@ async function navigateTo(page, options = {}) {
     syncOptionalElement("footer", parsed);
     document.body.className = parsed.body.className;
 
-    if (options.push !== false) {
+    const nextUrl = options.fullPath === true ? getFullUrlForPage(normalizedPage) : getHashForPage(normalizedPage);
+
+    if (options.replace === true) {
+      history.replaceState({}, "", nextUrl);
+    } else if (options.push !== false) {
       history.pushState({}, "", getHashForPage(normalizedPage));
     }
 
@@ -118,6 +150,17 @@ async function navigateTo(page, options = {}) {
   } catch {
     location.href = normalizedPage;
   }
+}
+
+async function routeInitialHash() {
+  const hashPage = getPageFromHash();
+
+  if (hashPage && hashPage !== getCurrentPage()) {
+    await navigateTo(hashPage, { push: false });
+    return;
+  }
+
+  setupActiveNav();
 }
 
 function syncOptionalElement(selector, parsed) {
@@ -158,7 +201,7 @@ function getPageFromHash() {
     "#admin": "admin.html",
   };
 
-  return map[location.hash] || "";
+  return map[location.hash.toLowerCase()] || "";
 }
 
 function getHashForPage(page) {
@@ -174,7 +217,36 @@ function getHashForPage(page) {
     "admin.html": "#admin",
   };
 
-  return map[page] || "#home";
+  return map[normalizePage(page)] || "#home";
+}
+
+function getFullUrlForPage(page) {
+  const normalizedPage = normalizePage(page);
+  return `${normalizedPage}${getHashForPage(normalizedPage)}`;
+}
+
+function normalizePage(value) {
+  const raw = String(value || "")
+    .trim()
+    .replace(/^#/, "")
+    .replace(/^\//, "")
+    .split("?")[0]
+    .toLowerCase();
+  if (raw === "logout") {
+    return "logout";
+  }
+  const name = raw.endsWith(".html") ? raw : `${raw || "home"}.html`;
+  const aliases = {
+    "account.html": "index.html",
+    "entry.html": "index.html",
+    "qq.html": "school.html",
+  };
+
+  return aliases[name] || name;
+}
+
+function getCurrentPage() {
+  return normalizePage(location.pathname.split("/").pop() || "index.html");
 }
 
 async function fetchPage(page) {
@@ -212,11 +284,11 @@ function prefetchPages() {
 }
 
 function setupActiveNav() {
-  const currentPage = getPageFromHash() || location.pathname.split("/").pop() || "index.html";
+  const currentPage = getPageFromHash() || getCurrentPage();
 
   document.querySelectorAll(".site-header nav a").forEach((link) => {
-    const linkPage = link.dataset.page || link.getAttribute("href");
-    const isActive = linkPage === currentPage || getHashForPage(linkPage) === location.hash;
+    const linkPage = normalizePage(link.dataset.page || link.getAttribute("href"));
+    const isActive = linkPage === currentPage;
 
     link.classList.toggle("active", isActive);
 
@@ -224,6 +296,32 @@ function setupActiveNav() {
       link.setAttribute("aria-current", "page");
     } else {
       link.removeAttribute("aria-current");
+    }
+  });
+}
+
+function updateNavAuthLink() {
+  document.querySelectorAll(".site-header nav").forEach((nav) => {
+    let authLink = nav.querySelector("[data-auth-action]");
+    const oldEntry = nav.querySelector('a[data-page="index.html"]');
+
+    if (!authLink && oldEntry) {
+      authLink = oldEntry;
+      authLink.dataset.authAction = "logout";
+      authLink.removeAttribute("data-page");
+      authLink.setAttribute("href", "#logout");
+    }
+
+    if (!authLink && !document.body.classList.contains("entry-page")) {
+      authLink = document.createElement("a");
+      authLink.href = "#logout";
+      authLink.dataset.authAction = "logout";
+      nav.append(authLink);
+    }
+
+    if (authLink) {
+      authLink.textContent = currentUser || isGuest() ? "登出" : "登录";
+      authLink.setAttribute("aria-label", currentUser || isGuest() ? "退出登录" : "返回登录入口");
     }
   });
 }
@@ -250,6 +348,11 @@ function setupCopyButtons() {
 }
 
 async function loadSession() {
+  if (isStaticPreview()) {
+    backendAvailable = false;
+    return;
+  }
+
   try {
     const data = await apiFetch("/api/session");
     currentUser = data.user;
@@ -276,9 +379,36 @@ function setupGuestEntry() {
       currentUser = null;
       localStorage.removeItem("card-site-session");
       localStorage.setItem("card-site-guest", "true");
-      navigateTo("home.html");
+      updateNavAuthLink();
+      navigateTo("home.html", { replace: true, fullPath: true });
     });
   });
+}
+
+function setupLogout() {
+  document.querySelectorAll("[data-auth-action='logout']").forEach((button) => {
+    if (button.dataset.bound === "true") {
+      return;
+    }
+
+    button.dataset.bound = "true";
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      await logoutUser();
+    });
+  });
+}
+
+async function logoutUser() {
+  if (!isStaticPreview()) {
+    await apiFetch("/api/logout", { method: "POST" }).catch(() => {});
+  }
+
+  currentUser = null;
+  localStorage.removeItem("card-site-session");
+  localStorage.removeItem("card-site-guest");
+  updateNavAuthLink();
+  await navigateTo("index.html", { replace: true, fullPath: true });
 }
 
 function isGuest() {
@@ -303,6 +433,7 @@ function setupAccountForms() {
       const isLogin = tab.dataset.tab === "login";
 
       tabs.forEach((item) => item.classList.toggle("active", item === tab));
+      tabs.forEach((item) => item.setAttribute("aria-selected", String(item === tab)));
       loginForm.classList.toggle("hidden", !isLogin);
       registerForm.classList.toggle("hidden", isLogin);
       accountStatus.textContent = "";
@@ -331,19 +462,12 @@ function setupAccountForms() {
       currentUser = data.user;
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
       localStorage.removeItem("card-site-guest");
+      updateNavAuthLink();
       accountStatus.textContent = "已进入";
       registerForm.reset();
-      window.setTimeout(() => navigateTo("home.html"), 280);
+      window.setTimeout(() => navigateTo("home.html", { replace: true, fullPath: true }), 280);
     } catch (error) {
-      if (!backendAvailable || error.isNetwork) {
-        saveLocalUser({ nickname, email, password });
-        accountStatus.textContent = "已进入";
-        registerForm.reset();
-        window.setTimeout(() => navigateTo("home.html"), 280);
-        return;
-      }
-
-      accountStatus.textContent = error.message;
+      accountStatus.textContent = error.isNetwork ? "服务暂不可用，请稍后再试" : error.message;
     }
   });
 
@@ -363,25 +487,12 @@ function setupAccountForms() {
       currentUser = data.user;
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
       localStorage.removeItem("card-site-guest");
+      updateNavAuthLink();
       accountStatus.textContent = "已进入";
       loginForm.reset();
-      window.setTimeout(() => navigateTo("home.html"), 280);
+      window.setTimeout(() => navigateTo("home.html", { replace: true, fullPath: true }), 280);
     } catch (error) {
-      if (!backendAvailable || error.isNetwork) {
-        const localUser = loginLocalUser(loginName, password);
-
-        if (localUser) {
-          currentUser = localUser;
-          localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-          localStorage.removeItem("card-site-guest");
-          accountStatus.textContent = "已进入";
-          loginForm.reset();
-          window.setTimeout(() => navigateTo("home.html"), 280);
-          return;
-        }
-      }
-
-      accountStatus.textContent = error.message || "账号或密码不对";
+      accountStatus.textContent = error.isNetwork ? "服务暂不可用，请稍后再试" : error.message || "账号或密码不对";
     }
   });
 }
@@ -425,25 +536,8 @@ async function setupMessages() {
         body: { name, message },
       });
     } catch (error) {
-      if (!backendAvailable || error.isNetwork) {
-        const messages = getLocalMessages();
-        messages.unshift({
-          id: Date.now(),
-          userId: currentUser.id || "local",
-          name,
-          message,
-          time: new Date().toLocaleString("zh-CN", {
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        });
-        saveLocalMessages(messages.slice(0, 8));
-      } else {
-        messageGate.textContent = error.message;
-        return;
-      }
+      messageGate.textContent = error.isNetwork ? "服务暂不可用，请稍后再试" : error.message;
+      return;
     }
 
     messageForm.reset();
@@ -466,7 +560,15 @@ function updateMessageGate() {
     input.disabled = !canSend;
   });
 
-  messageGate.textContent = canSend ? `已登录：${currentUser.nickname}` : isGuest() ? "游客不可发送私信" : "未登录";
+  messageForm.querySelectorAll("[data-required-when-active]").forEach((input) => {
+    input.toggleAttribute("required", canSend);
+  });
+
+  messageGate.innerHTML = canSend
+    ? `已登录：${escapeHtml(currentUser.nickname)}`
+    : isGuest()
+      ? `游客模式不可发送私信，<a href="#entry" data-page="index.html">登录或注册</a>`
+      : `未登录，<a href="#entry" data-page="index.html">登录或注册</a>`;
 }
 
 async function renderMessages() {
@@ -502,21 +604,17 @@ async function renderMessages() {
 }
 
 async function getMessages() {
+  if (isStaticPreview()) {
+    return defaultMessages;
+  }
+
   try {
     const data = await apiFetch("/api/messages");
     return data.messages.length ? data.messages : defaultMessages;
   } catch {
     backendAvailable = false;
-    return getLocalMessages();
+    return defaultMessages;
   }
-}
-
-function getLocalMessages() {
-  return JSON.parse(localStorage.getItem("card-site-messages") || "null") || defaultMessages;
-}
-
-function saveLocalMessages(messages) {
-  localStorage.setItem("card-site-messages", JSON.stringify(messages));
 }
 
 function canDeleteMessage(item) {
@@ -535,13 +633,8 @@ async function deleteMessage(id) {
       method: "DELETE",
     });
   } catch (error) {
-    if (!backendAvailable || error.isNetwork) {
-      const messages = getLocalMessages().filter((item) => String(item.id) !== String(id));
-      saveLocalMessages(messages);
-    } else {
-      setText(messageGate, error.message);
-      return;
-    }
+    setText(messageGate, error.isNetwork ? "服务暂不可用，请稍后再试" : error.message);
+    return;
   }
 
   await renderMessages();
@@ -555,6 +648,14 @@ async function setupAdminDashboard() {
   }
 
   const status = document.querySelector("#adminStatus");
+
+  if (isStaticPreview()) {
+    renderAdminSummary();
+    renderAdminUsers([]);
+    renderAdminMessages([]);
+    setText(status, "本地静态预览不运行管理接口。");
+    return;
+  }
 
   try {
     const [summary, users, messages] = await Promise.all([
@@ -659,27 +760,6 @@ async function deleteAdminMessage(id) {
   }
 }
 
-function saveLocalUser(user) {
-  localStorage.setItem("card-site-user", JSON.stringify(user));
-  currentUser = { nickname: user.nickname, email: user.email };
-  localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-  localStorage.removeItem("card-site-guest");
-}
-
-function loginLocalUser(loginName, password) {
-  const savedUser = JSON.parse(localStorage.getItem("card-site-user") || "null");
-
-  if (!savedUser) {
-    return null;
-  }
-
-  const matched =
-    (loginName === savedUser.email || loginName === savedUser.nickname) &&
-    password === savedUser.password;
-
-  return matched ? { nickname: savedUser.nickname, email: savedUser.email } : null;
-}
-
 async function apiFetch(path, options = {}) {
   try {
     const response = await fetch(path, {
@@ -708,6 +788,10 @@ async function apiFetch(path, options = {}) {
   }
 }
 
+function isStaticPreview() {
+  return ["127.0.0.1", "localhost"].includes(location.hostname);
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => {
     const map = {
@@ -731,8 +815,7 @@ function setupMusicControls() {
   const music = getMusic();
 
   if (pageAudio) {
-    pageAudio.hidden = true;
-    pageAudio.controls = false;
+    pageAudio.remove();
   }
 
   statuses.forEach((status) => {
@@ -766,8 +849,6 @@ function setupMusicControls() {
   }
 
   updateMusicControls();
-  tryAutoplayMusic();
-  bindMusicGestureResume();
 }
 
 function getMusic() {
@@ -792,6 +873,7 @@ async function playMusic() {
   const music = getMusic();
 
   try {
+    music.preload = "auto";
     music.muted = false;
     await music.play();
     localStorage.setItem("card-site-music-playing", "true");
@@ -810,28 +892,23 @@ async function tryAutoplayMusic() {
 
   musicAutoplayTried = true;
 
-  try {
-    const music = getMusic();
-    music.muted = false;
-    await music.play();
-    localStorage.setItem("card-site-music-playing", "true");
-    setMusicStatus("音乐播放中");
-  } catch {
-    setMusicStatus("点击后播放");
-  } finally {
-    updateMusicControls();
+  const wantsMusic = localStorage.getItem("card-site-music-playing") !== "false";
+
+  if (wantsMusic) {
+    await playMusic();
+    bindMusicGestureResume();
   }
 }
 
 function bindMusicGestureResume() {
-  if (musicGestureBound) {
+  if (musicGestureBound || localStorage.getItem("card-site-music-playing") === "false") {
     return;
   }
 
   musicGestureBound = true;
 
   const resume = async () => {
-    if (localStorage.getItem("card-site-music-playing") !== "false" && getMusic().paused) {
+    if (getMusic().paused) {
       await playMusic();
     }
 

@@ -46,6 +46,7 @@
 html {
   scroll-behavior: smooth;
   overflow-x: clip;
+  scroll-padding-top: 120px;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -475,10 +476,12 @@ nav a.active {
 main {
   width: min(1280px, calc(100% - 40px));
   margin: 0 auto;
+  padding-top: clamp(34px, 6vw, 76px);
 }
 
 .home-main {
   width: min(1280px, calc(100% - 40px));
+  padding-top: 0;
 }
 
 .hero-grid {
@@ -596,6 +599,15 @@ main {
 
 .button:hover {
   transform: translateY(-2px);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+.tab:focus-visible {
+  outline: 3px solid rgba(109, 231, 255, 0.68);
+  outline-offset: 3px;
 }
 
 .primary {
@@ -1245,6 +1257,12 @@ button:disabled {
   background: rgba(255, 255, 255, 0.08);
 }
 
+.gate a {
+  color: var(--text-strong);
+  text-decoration-color: rgba(109, 231, 255, 0.72);
+  text-underline-offset: 4px;
+}
+
 .message-layout {
   display: grid;
   grid-template-columns: minmax(280px, 0.76fr) minmax(0, 1fr);
@@ -1504,7 +1522,7 @@ footer p {
 
   .entry-art {
     min-height: auto;
-    padding: 30px 22px;
+    padding: 22px;
   }
 
   .site-header {
@@ -1539,7 +1557,39 @@ footer p {
   }
 
   .hero-grid {
-    padding-top: 26px;
+    padding-top: 18px;
+  }
+
+  .profile-panel {
+    padding: 22px;
+  }
+
+  .profile-panel h1 {
+    margin-top: 14px;
+    font-size: clamp(46px, 15vw, 64px);
+  }
+
+  .profile-subtitle {
+    font-size: 18px;
+  }
+
+  .avatar-ring {
+    width: clamp(110px, 34vw, 150px);
+    height: clamp(110px, 34vw, 150px);
+  }
+
+  .entry-stage {
+    gap: 16px;
+    padding: 18px 0 28px;
+  }
+
+  .entry-form {
+    padding: 24px 20px;
+  }
+
+  .entry-form h2 {
+    margin-bottom: 16px;
+    font-size: clamp(30px, 10vw, 44px);
   }
 
   .hero-panel h2 {

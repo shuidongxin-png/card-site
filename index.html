@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="晓染的个人主页入口。" />
     <title>晓染 - 入口</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
     <link rel="preload" href="assets/avatar.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
@@ -24,18 +25,18 @@
           <div class="entry-mark" aria-hidden="true">N</div>
           <h2>Welcome back</h2>
           <div class="tabs" role="tablist" aria-label="账号表单">
-            <button class="tab active" type="button" data-tab="login">登录</button>
-            <button class="tab" type="button" data-tab="register">注册</button>
+            <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="login">登录</button>
+            <button class="tab" type="button" role="tab" aria-selected="false" data-tab="register">注册</button>
           </div>
 
           <form id="loginForm" class="account-form">
             <label>
               邮箱或昵称
-              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" />
+              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" required />
             </label>
             <label>
               密码
-              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" required minlength="6" />
             </label>
             <button class="button primary" type="submit">进入主页</button>
           </form>
@@ -43,15 +44,15 @@
           <form id="registerForm" class="account-form hidden">
             <label>
               昵称
-              <input name="nickname" autocomplete="nickname" placeholder="晓染" />
+              <input name="nickname" autocomplete="nickname" placeholder="晓染" required />
             </label>
             <label>
               邮箱
-              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
             </label>
             <label>
               密码
-              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" />
+              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" required minlength="6" />
             </label>
             <button class="button primary" type="submit">创建并进入</button>
           </form>
