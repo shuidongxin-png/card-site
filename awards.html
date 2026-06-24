@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -9,56 +9,69 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#home" data-page="index.html">晓染</a>
+      <a class="brand" href="#home" data-page="home.html"><span>晓染</span></a>
       <nav aria-label="主导航">
-        <a href="#home" data-page="index.html">首页</a>
-        <a href="#qq" data-page="qq.html">QQ 主页</a>
-        <a href="#account" data-page="account.html">登录</a>
+        <a href="#home" data-page="home.html">首页</a>
+        <a href="#school" data-page="school.html">学校</a>
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#entry" data-page="index.html">入口</a>
       </nav>
     </header>
 
     <main id="top">
       <section id="awards" class="section">
-        <div class="section-heading">
+        <div class="section-heading glass-panel reveal-card">
           <div>
-            <p class="eyebrow">Awards</p>
-            <h1>我的奖项</h1>
+            <p class="micro">Awards Archive</p>
+            <h1>奖状证书</h1>
           </div>
         </div>
 
-        <div class="showcase-grid award-grid">
-          <article class="showcase-card award-card">
-            <img src="assets/thumbs/award-1.jpg" alt="英语四级成绩截图" width="342" height="760" decoding="async" />
+        <div class="card-grid award-grid">
+          <article class="showcase-card award-card glass-panel reveal-card">
+            <div class="award-media">
+              <img src="assets/card-thumbs/award-1.jpg" alt="英语四级成绩截图" width="620" height="760" loading="eager" decoding="async" />
+            </div>
             <h2>英语四级成绩</h2>
           </article>
-          <article class="showcase-card award-card">
-            <img src="assets/thumbs/award-2.jpg" alt="优秀个人荣誉证书" width="760" height="593" decoding="async" />
+          <article class="showcase-card award-card glass-panel reveal-card delay-1">
+            <div class="award-media">
+              <img src="assets/card-thumbs/award-2.jpg" alt="优秀个人荣誉证书" width="760" height="623" loading="eager" decoding="async" />
+            </div>
             <h2>优秀个人</h2>
           </article>
-          <article class="showcase-card award-card">
-            <img src="assets/thumbs/award-3.jpg" alt="中国国际大学生创新大赛证书" width="760" height="560" decoding="async" />
-            <h2>创新大赛高教主赛道银奖</h2>
+          <article class="showcase-card award-card glass-panel reveal-card delay-2">
+            <div class="award-media">
+              <img src="assets/card-thumbs/award-3.jpg" alt="中国国际大学生创新大赛证书" width="760" height="623" loading="eager" decoding="async" />
+            </div>
+            <h2>创新大赛银奖</h2>
           </article>
-          <article class="showcase-card award-card">
-            <img src="assets/thumbs/award-4.jpg" alt="蓝桥杯获奖证书" width="537" height="760" decoding="async" />
-            <h2>蓝桥杯 C/C++ 程序设计三等奖</h2>
+          <article class="showcase-card award-card glass-panel reveal-card delay-3">
+            <div class="award-media">
+              <img src="assets/card-thumbs/award-4.jpg" alt="蓝桥杯获奖证书" width="640" height="780" loading="eager" decoding="async" />
+            </div>
+            <h2>蓝桥杯三等奖</h2>
           </article>
-          <article class="showcase-card award-card">
-            <img src="assets/thumbs/award-5.jpg" alt="春日光影故事征文优秀作品奖证书" width="760" height="573" decoding="async" />
-            <h2>春日光影故事优秀作品奖</h2>
+          <article class="showcase-card award-card glass-panel reveal-card">
+            <div class="award-media">
+              <img src="assets/card-thumbs/award-5.jpg" alt="春日光影故事征文优秀作品奖证书" width="760" height="623" loading="eager" decoding="async" />
+            </div>
+            <h2>优秀作品奖</h2>
+          </article>
+          <article class="placeholder-card glass-panel reveal-card delay-1">
+            <span>+</span>
+            <strong>新增证书位</strong>
           </article>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
-      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+      <p>© <span id="year"></span> 晓染</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

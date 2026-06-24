@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
@@ -9,69 +9,81 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#home" data-page="index.html">晓染</a>
+      <a class="brand" href="#home" data-page="home.html"><span>晓染</span></a>
       <nav aria-label="主导航">
-        <a href="#home" data-page="index.html">首页</a>
-        <a href="#qq" data-page="qq.html">QQ 主页</a>
-        <a href="#account" data-page="account.html">登录</a>
+        <a href="#home" data-page="home.html">首页</a>
+        <a href="#school" data-page="school.html">学校</a>
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#entry" data-page="index.html">入口</a>
       </nav>
     </header>
 
     <main id="top">
       <section id="skills" class="section">
-        <div class="section-heading">
+        <div class="section-heading glass-panel reveal-card">
           <div>
-            <p class="eyebrow">Skills</p>
-            <h1>我的技能</h1>
+            <p class="micro">Skill Matrix</p>
+            <h1>技能作品</h1>
           </div>
-          <p class="section-note">海报制作、平面设计、版式表达和空间图纸整理。</p>
         </div>
 
-        <div class="showcase-grid skill-grid">
-          <article class="showcase-card featured-skill">
-            <img src="assets/thumbs/skill-1.jpg" alt="圣诞主题海报作品" width="573" height="760" decoding="async" />
+        <div class="card-grid skills-grid">
+          <article class="showcase-card skill-card glass-panel reveal-card">
+            <img src="assets/skill-display/skill-1-full.jpg" alt="圣诞主题海报作品" width="904" height="1200" loading="eager" decoding="async" />
             <div>
               <span class="tag">海报制作</span>
-              <h2>节日主题视觉海报</h2>
-              <p>根据活动主题组织画面、文字层级和色彩氛围，让信息更醒目。</p>
+              <h2>节日主题视觉</h2>
             </div>
           </article>
-          <article class="showcase-card">
-            <img src="assets/thumbs/skill-2.jpg" alt="智慧抗衰主题演示页面" width="352" height="760" decoding="async" />
+          <article class="showcase-card skill-card skill-card-crop glass-panel reveal-card delay-1">
+            <img src="assets/skill-display/skill-2-cropped.jpg" alt="智慧抗衰主题演示页面" width="720" height="1056" loading="eager" decoding="async" />
             <div>
-              <span class="tag">平面设计</span>
-              <h2>商业信息排版</h2>
-              <p>适合宣传页、PPT 页面和项目介绍图，重点突出，阅读节奏清楚。</p>
+              <span class="tag">信息排版</span>
+              <h2>商业页面表达</h2>
             </div>
           </article>
-          <article class="showcase-card">
-            <img src="assets/thumbs/skill-3.jpg" alt="美容项目宣传海报" width="428" height="760" decoding="async" />
+          <article class="showcase-card skill-card glass-panel reveal-card delay-2">
+            <img src="assets/skill-display/skill-3-cropped.jpg" alt="美容项目宣传海报" width="760" height="1075" loading="eager" decoding="async" />
             <div>
-              <span class="tag">平面设计</span>
-              <h2>宣传物料设计</h2>
-              <p>整合图片、卖点和说明文字，形成统一风格，适合线下展示。</p>
+              <span class="tag">宣传物料</span>
+              <h2>项目视觉整合</h2>
             </div>
           </article>
-          <article class="showcase-card">
-            <img src="assets/thumbs/skill-4.jpg" alt="空间平面图纸" width="760" height="581" decoding="async" />
+          <article class="showcase-card skill-card glass-panel reveal-card delay-3">
+            <img src="assets/skill-display/skill-4-full.jpg" alt="空间平面图纸" width="980" height="749" loading="eager" decoding="async" />
             <div>
               <span class="tag">图纸整理</span>
-              <h2>平面布局表达</h2>
-              <p>整理空间尺寸和功能分区，让布局信息更直观，方便沟通。</p>
+              <h2>空间布局表达</h2>
             </div>
+          </article>
+          <article class="showcase-card skill-card skill-card-wide glass-panel reveal-card delay-1">
+            <img src="assets/skill-display/skill-6-cropped.jpg" alt="游戏个人主页截图" width="1100" height="546" loading="eager" decoding="async" />
+            <div>
+              <span class="tag">游戏主页</span>
+              <h2>个人战绩界面</h2>
+            </div>
+          </article>
+          <article class="showcase-card skill-card glass-panel reveal-card">
+            <img src="assets/skill-display/skill-5-cropped.jpg" alt="中国国际大学生创新大赛项目海报" width="900" height="1289" loading="eager" decoding="async" />
+            <div>
+              <span class="tag">创新项目</span>
+              <h2>农田变量施药方案</h2>
+            </div>
+          </article>
+          <article class="placeholder-card glass-panel reveal-card delay-1">
+            <span>+</span>
+            <strong>新增作品位</strong>
           </article>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
-      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+      <p>© <span id="year"></span> 晓染</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

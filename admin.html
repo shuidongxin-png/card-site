@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="晓染个人主页管理面板。" />
+    <title>晓染 - 管理</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" data-page="home.html"><span>晓染</span></a>
+      <nav aria-label="主导航">
+        <a href="#home" data-page="home.html">首页</a>
+        <a href="#school" data-page="school.html">学校</a>
+        <a href="#messages" data-page="messages.html">私信</a>
+        <a href="#skills" data-page="skills.html">技能</a>
+        <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#admin" data-page="admin.html">管理</a>
+        <a href="#entry" data-page="index.html">入口</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section id="adminDashboard" class="section admin-dashboard">
+        <div class="section-heading glass-panel reveal-card">
+          <div>
+            <p class="micro">Control Room</p>
+            <h1>管理面板</h1>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <section class="admin-card glass-panel reveal-card delay-1">
+            <p class="micro">Overview</p>
+            <div id="adminStats" class="admin-stats">
+              <div><strong>-</strong><span>用户</span></div>
+              <div><strong>-</strong><span>留言</span></div>
+              <div><strong>-</strong><span>会话</span></div>
+            </div>
+            <p id="adminStatus" class="status" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="admin-card glass-panel reveal-card delay-2">
+            <p class="micro">Users</p>
+            <h2>最新用户</h2>
+            <div id="adminUsers" class="admin-list"></div>
+          </section>
+
+          <section class="admin-card admin-card-wide glass-panel reveal-card delay-3">
+            <p class="micro">Messages</p>
+            <h2>私信留言</h2>
+            <div id="adminMessages" class="admin-list"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> 晓染</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="晓染的个人主页。" />
+    <title>晓染 - 首页</title>
+    <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
+    <link rel="preload" href="assets/avatar.jpg" as="image" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#home" data-page="home.html"><span>晓染</span></a>
+      <nav aria-label="主导航">
+        <a href="#home" data-page="home.html">首页</a>
+        <a href="#school" data-page="school.html">学校</a>
+        <a href="#messages" data-page="messages.html">私信</a>
+        <a href="#skills" data-page="skills.html">技能</a>
+        <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#entry" data-page="index.html">入口</a>
+      </nav>
+    </header>
+
+    <main id="top" class="home-main">
+      <section class="hero-grid">
+        <aside class="profile-panel glass-panel reveal-card">
+          <div class="avatar-ring">
+            <img src="assets/avatar.jpg" alt="晓染头像" width="800" height="800" fetchpriority="high" decoding="async" />
+          </div>
+          <p class="micro">SCORPIO / QQ 3265176894</p>
+          <h1>晓染</h1>
+          <p class="profile-subtitle">税冬鑫</p>
+          <div class="profile-contact">
+            <div class="signal-pill">微信 sdx20039</div>
+            <button class="button secondary contact-copy" data-copy="sdx20039" type="button">复制微信</button>
+          </div>
+          <p id="copyStatus" class="status" role="status" aria-live="polite"></p>
+        </aside>
+
+        <section class="hero-panel glass-panel reveal-card delay-1" aria-label="主页介绍">
+          <h2>把灵感做成可见的作品</h2>
+          <div class="actions">
+            <a class="button primary" href="#skills" data-page="skills.html">查看技能</a>
+            <a class="button secondary" href="#messages" data-page="messages.html">发送私信</a>
+          </div>
+        </section>
+
+        <section class="stats-panel glass-panel reveal-card delay-2" aria-label="主页数据">
+          <div>
+            <strong>5+</strong>
+            <span>证书</span>
+          </div>
+          <div>
+            <strong>4+</strong>
+            <span>技能作品</span>
+          </div>
+          <div>
+            <strong>2026</strong>
+            <span>持续更新</span>
+          </div>
+        </section>
+
+        <section class="feature-strip">
+          <a class="feature-card glass-panel reveal-card delay-2" href="#school" data-page="school.html">
+            <span>校园</span>
+            <strong>学校简介</strong>
+          </a>
+          <a class="feature-card glass-panel reveal-card delay-3" href="#awards" data-page="awards.html">
+            <span>荣誉</span>
+            <strong>奖状证书</strong>
+          </a>
+        </section>
+      </section>
+
+      <section class="music-player glass-panel reveal-card" aria-label="背景音乐播放器">
+        <div>
+          <p class="micro">Background Music</p>
+          <h2>红色高跟鞋</h2>
+        </div>
+        <div class="audio-box">
+          <audio id="bgMusic" controls loop autoplay preload="auto" playsinline>
+            <source src="assets/bg-music.mp3" type="audio/mpeg" />
+          </audio>
+          <button id="musicToggle" class="button secondary" type="button">播放音乐</button>
+          <p id="musicStatus" class="mini-status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© <span id="year"></span> 晓染</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>

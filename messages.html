@@ -1,49 +1,49 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="登录后给晓染发送私信留言。" />
+    <meta name="description" content="给晓染发送私信。" />
     <title>晓染 - 私信</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#home" data-page="index.html">晓染</a>
+      <a class="brand" href="#home" data-page="home.html"><span>晓染</span></a>
       <nav aria-label="主导航">
-        <a href="#home" data-page="index.html">首页</a>
-        <a href="#qq" data-page="qq.html">QQ 主页</a>
-        <a href="#account" data-page="account.html">登录</a>
+        <a href="#home" data-page="home.html">首页</a>
+        <a href="#school" data-page="school.html">学校</a>
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#entry" data-page="index.html">入口</a>
       </nav>
     </header>
 
     <main id="top">
       <section id="messages" class="section">
-        <div class="section-heading">
+        <div class="section-heading glass-panel reveal-card">
           <div>
-            <p class="eyebrow">Private Message</p>
+            <p class="micro">Private Message</p>
             <h1>私信留言</h1>
           </div>
         </div>
 
         <div class="message-layout">
-          <form id="messageForm" class="panel message-form">
-            <p id="messageGate" class="gate">登录后即可留言。</p>
+          <form id="messageForm" class="glass-panel message-form reveal-card delay-1">
+            <p id="messageGate" class="gate">未登录</p>
             <label>
-              你的名字
-              <input name="name" placeholder="比如：朋友 A" disabled />
+              名字
+              <input name="name" placeholder="你的名字" disabled />
             </label>
             <label>
-              留言内容
-              <textarea name="message" rows="5" placeholder="想对税冬鑫说点什么？" disabled></textarea>
+              内容
+              <textarea name="message" rows="5" placeholder="写下想说的话" disabled></textarea>
             </label>
-            <button class="button primary" type="submit" disabled>发送私信</button>
+            <button class="button primary" type="submit" disabled>发送</button>
           </form>
 
-          <div class="panel">
+          <div class="glass-panel reveal-card delay-2">
             <h2>最新留言</h2>
             <div id="messageList" class="message-list"></div>
           </div>
@@ -52,10 +52,9 @@
     </main>
 
     <footer>
-      <p>© <span id="year"></span> 税冬鑫. All rights reserved.</p>
-      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
+      <p>© <span id="year"></span> 晓染</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

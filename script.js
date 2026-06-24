@@ -4,18 +4,18 @@ let backendAvailable = true;
 const pageCache = new Map();
 const persistentMusic = new Audio("assets/bg-music.mp3");
 persistentMusic.loop = true;
-persistentMusic.preload = "none";
+persistentMusic.preload = "auto";
 persistentMusic.volume = 0.72;
+localStorage.setItem("card-site-music-playing", "true");
 
-let musicHasLoaded = false;
-let triedAutoplay = false;
-let pointerResumeBound = false;
 let musicEventsBound = false;
+let musicAutoplayTried = false;
+let musicGestureBound = false;
 
 const defaultMessages = [
   {
     name: "晓染主页",
-    message: "欢迎来到我的个人主页，留言会保存在数据库里；本地预览时会临时保存在当前浏览器。",
+    message: "欢迎来到我的个人主页。",
     time: "刚刚",
   },
 ];
@@ -29,16 +29,28 @@ async function init() {
   await loadSession();
   await setupMessages();
   prefetchPages();
-  persistMusicState();
 }
 
 function bindPage() {
+  updateBodyStateClasses();
   updateYear();
   setupActiveNav();
   setupCopyButtons();
   setupAccountForms();
+  setupGuestEntry();
   setupMusicControls();
+  setupAdminDashboard();
   setupReveal();
+}
+
+function updateBodyStateClasses() {
+  document.body.classList.toggle("has-home-main", Boolean(document.querySelector(".home-main")));
+  document.body.classList.toggle("has-card-grid", Boolean(document.querySelector(".card-grid")));
+  document.body.classList.toggle("has-message-layout", Boolean(document.querySelector(".message-layout")));
+  document.body.classList.toggle("has-skills-page", Boolean(document.querySelector("#skills")));
+  document.body.classList.toggle("has-awards-page", Boolean(document.querySelector("#awards")));
+  document.body.classList.toggle("has-entry-page", Boolean(document.querySelector(".entry-shell")));
+  document.body.classList.toggle("has-admin-page", Boolean(document.querySelector("#adminDashboard")));
 }
 
 function updateYear() {
@@ -51,11 +63,7 @@ function setupClientNavigation() {
   document.addEventListener("click", async (event) => {
     const link = event.target.closest("a[href]");
 
-    if (!link || !isInternalPageLink(link)) {
-      return;
-    }
-
-    if (location.protocol === "file:") {
+    if (!link || !isInternalPageLink(link) || location.protocol === "file:") {
       return;
     }
 
@@ -64,7 +72,7 @@ function setupClientNavigation() {
   });
 
   window.addEventListener("popstate", async () => {
-    await navigateTo(getPageFromHash() || "index.html", { push: false });
+    await navigateTo(getPageFromHash() || "home.html", { push: false });
   });
 }
 
@@ -74,15 +82,14 @@ function isInternalPageLink(link) {
   return (
     link.dataset.page ||
     (href &&
-    !href.startsWith("#") &&
-    !href.startsWith("mailto:") &&
-    !href.startsWith("http") &&
-    href.endsWith(".html"))
+      !href.startsWith("mailto:") &&
+      !href.startsWith("http") &&
+      (href.endsWith(".html") || href.startsWith("#")))
   );
 }
 
 async function navigateTo(page, options = {}) {
-  const normalizedPage = page || "index.html";
+  const normalizedPage = page || "home.html";
 
   try {
     const html = await fetchPage(normalizedPage);
@@ -96,7 +103,10 @@ async function navigateTo(page, options = {}) {
     }
 
     document.title = parsed.title || document.title;
+    syncOptionalElement("header.site-header", parsed);
     currentMain.replaceWith(nextMain);
+    syncOptionalElement("footer", parsed);
+    document.body.className = parsed.body.className;
 
     if (options.push !== false) {
       history.pushState({}, "", getHashForPage(normalizedPage));
@@ -110,14 +120,42 @@ async function navigateTo(page, options = {}) {
   }
 }
 
+function syncOptionalElement(selector, parsed) {
+  const next = parsed.querySelector(selector);
+  const current = document.querySelector(selector);
+
+  if (next && current) {
+    current.replaceWith(next);
+    return;
+  }
+
+  if (next && !current) {
+    const main = document.querySelector("main");
+
+    if (selector.startsWith("header")) {
+      document.body.insertBefore(next, main);
+    } else {
+      document.body.append(next);
+    }
+    return;
+  }
+
+  if (!next && current) {
+    current.remove();
+  }
+}
+
 function getPageFromHash() {
   const map = {
-    "#home": "index.html",
-    "#qq": "qq.html",
-    "#account": "account.html",
+    "#entry": "index.html",
+    "#home": "home.html",
+    "#school": "school.html",
+    "#qq": "school.html",
+    "#account": "index.html",
     "#messages": "messages.html",
     "#skills": "skills.html",
     "#awards": "awards.html",
+    "#admin": "admin.html",
   };
 
   return map[location.hash] || "";
@@ -125,12 +163,15 @@ function getPageFromHash() {
 
 function getHashForPage(page) {
   const map = {
-    "index.html": "#home",
-    "qq.html": "#qq",
-    "account.html": "#account",
+    "index.html": "#entry",
+    "home.html": "#home",
+    "school.html": "#school",
+    "qq.html": "#school",
+    "account.html": "#entry",
     "messages.html": "#messages",
     "skills.html": "#skills",
     "awards.html": "#awards",
+    "admin.html": "#admin",
   };
 
   return map[page] || "#home";
@@ -153,7 +194,7 @@ async function fetchPage(page) {
 }
 
 function prefetchPages() {
-  const pages = ["index.html", "qq.html", "account.html", "messages.html", "skills.html", "awards.html"];
+  const pages = ["index.html", "home.html", "school.html", "messages.html", "skills.html", "awards.html", "admin.html"];
 
   const run = () => {
     pages.forEach((page) => {
@@ -171,11 +212,19 @@ function prefetchPages() {
 }
 
 function setupActiveNav() {
-  const currentPage = location.pathname.split("/").pop() || "index.html";
+  const currentPage = getPageFromHash() || location.pathname.split("/").pop() || "index.html";
 
   document.querySelectorAll(".site-header nav a").forEach((link) => {
-    const linkPage = link.getAttribute("href");
-    link.classList.toggle("active", linkPage === currentPage);
+    const linkPage = link.dataset.page || link.getAttribute("href");
+    const isActive = linkPage === currentPage || getHashForPage(linkPage) === location.hash;
+
+    link.classList.toggle("active", isActive);
+
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
   });
 }
 
@@ -192,13 +241,9 @@ function setupCopyButtons() {
 
       try {
         await navigator.clipboard.writeText(value);
-        if (copyStatus) {
-          copyStatus.textContent = `已复制：${value}`;
-        }
+        setText(copyStatus, `已复制：${value}`);
       } catch {
-        if (copyStatus) {
-          copyStatus.textContent = `复制失败，请手动复制：${value}`;
-        }
+        setText(copyStatus, `复制失败：${value}`);
       }
     });
   });
@@ -211,12 +256,33 @@ async function loadSession() {
 
     if (currentUser) {
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-    } else {
+      localStorage.removeItem("card-site-guest");
+    } else if (!isGuest()) {
       localStorage.removeItem("card-site-session");
     }
   } catch {
     backendAvailable = false;
   }
+}
+
+function setupGuestEntry() {
+  document.querySelectorAll("[data-guest-login]").forEach((button) => {
+    if (button.dataset.bound === "true") {
+      return;
+    }
+
+    button.dataset.bound = "true";
+    button.addEventListener("click", () => {
+      currentUser = null;
+      localStorage.removeItem("card-site-session");
+      localStorage.setItem("card-site-guest", "true");
+      navigateTo("home.html");
+    });
+  });
+}
+
+function isGuest() {
+  return localStorage.getItem("card-site-guest") === "true" && !currentUser;
 }
 
 function setupAccountForms() {
@@ -252,7 +318,7 @@ function setupAccountForms() {
     const password = form.get("password");
 
     if (!nickname || !email || password.length < 6) {
-      accountStatus.textContent = "请填写昵称、邮箱，并设置至少 6 位密码。";
+      accountStatus.textContent = "请补全账号信息";
       return;
     }
 
@@ -264,15 +330,16 @@ function setupAccountForms() {
 
       currentUser = data.user;
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-      accountStatus.textContent = "注册成功，正在进入留言页。";
+      localStorage.removeItem("card-site-guest");
+      accountStatus.textContent = "已进入";
       registerForm.reset();
-      window.setTimeout(() => navigateTo("messages.html"), 500);
+      window.setTimeout(() => navigateTo("home.html"), 280);
     } catch (error) {
       if (!backendAvailable || error.isNetwork) {
         saveLocalUser({ nickname, email, password });
-        accountStatus.textContent = "本地演示注册成功，正在进入留言页。";
+        accountStatus.textContent = "已进入";
         registerForm.reset();
-        window.setTimeout(() => navigateTo("messages.html"), 500);
+        window.setTimeout(() => navigateTo("home.html"), 280);
         return;
       }
 
@@ -295,9 +362,10 @@ function setupAccountForms() {
 
       currentUser = data.user;
       localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-      accountStatus.textContent = `欢迎回来，${currentUser.nickname}，正在进入留言页。`;
+      localStorage.removeItem("card-site-guest");
+      accountStatus.textContent = "已进入";
       loginForm.reset();
-      window.setTimeout(() => navigateTo("messages.html"), 500);
+      window.setTimeout(() => navigateTo("home.html"), 280);
     } catch (error) {
       if (!backendAvailable || error.isNetwork) {
         const localUser = loginLocalUser(loginName, password);
@@ -305,14 +373,15 @@ function setupAccountForms() {
         if (localUser) {
           currentUser = localUser;
           localStorage.setItem("card-site-session", JSON.stringify(currentUser));
-          accountStatus.textContent = `本地演示登录成功：${currentUser.nickname}`;
+          localStorage.removeItem("card-site-guest");
+          accountStatus.textContent = "已进入";
           loginForm.reset();
-          window.setTimeout(() => navigateTo("messages.html"), 500);
+          window.setTimeout(() => navigateTo("home.html"), 280);
           return;
         }
       }
 
-      accountStatus.textContent = error.message || "账号或密码不对。";
+      accountStatus.textContent = error.message || "账号或密码不对";
     }
   });
 }
@@ -338,7 +407,7 @@ async function setupMessages() {
     event.preventDefault();
 
     if (!currentUser) {
-      messageGate.textContent = "还没登录，先注册或登录后再留言。";
+      messageGate.textContent = isGuest() ? "游客不可发送私信" : "未登录";
       return;
     }
 
@@ -390,21 +459,14 @@ function updateMessageGate() {
     return;
   }
 
-  const isLoggedIn = Boolean(currentUser);
+  const canSend = Boolean(currentUser);
   const inputs = messageForm.querySelectorAll("input, textarea, button");
 
   inputs.forEach((input) => {
-    input.disabled = !isLoggedIn;
+    input.disabled = !canSend;
   });
 
-  if (isLoggedIn) {
-    messageGate.textContent = backendAvailable
-      ? `已登录：${currentUser.nickname}，可以发送留言。`
-      : `本地演示登录：${currentUser.nickname}，上线绑定 D1 后会写入数据库。`;
-    return;
-  }
-
-  messageGate.textContent = "请先在登录页注册或登录，登录后这里会开放留言。";
+  messageGate.textContent = canSend ? `已登录：${currentUser.nickname}` : isGuest() ? "游客不可发送私信" : "未登录";
 }
 
 async function renderMessages() {
@@ -477,9 +539,7 @@ async function deleteMessage(id) {
       const messages = getLocalMessages().filter((item) => String(item.id) !== String(id));
       saveLocalMessages(messages);
     } else {
-      if (messageGate) {
-        messageGate.textContent = error.message;
-      }
+      setText(messageGate, error.message);
       return;
     }
   }
@@ -487,10 +547,123 @@ async function deleteMessage(id) {
   await renderMessages();
 }
 
+async function setupAdminDashboard() {
+  const dashboard = document.querySelector("#adminDashboard");
+
+  if (!dashboard) {
+    return;
+  }
+
+  const status = document.querySelector("#adminStatus");
+
+  try {
+    const [summary, users, messages] = await Promise.all([
+      apiFetch("/api/admin/summary"),
+      apiFetch("/api/admin/users"),
+      apiFetch("/api/admin/messages"),
+    ]);
+
+    renderAdminSummary(summary);
+    renderAdminUsers(users.users || []);
+    renderAdminMessages(messages.messages || []);
+    setText(status, summary.admin ? `当前管理员：${summary.admin.nickname}` : "");
+  } catch (error) {
+    renderAdminSummary();
+    renderAdminUsers([]);
+    renderAdminMessages([]);
+    setText(status, error.message || "请用管理员账号登录后查看。");
+  }
+}
+
+function renderAdminSummary(summary = null) {
+  const stats = document.querySelector("#adminStats");
+
+  if (!stats) {
+    return;
+  }
+
+  const totals = summary?.totals || { users: "-", messages: "-", sessions: "-" };
+  stats.innerHTML = `
+    <div><strong>${escapeHtml(totals.users)}</strong><span>用户</span></div>
+    <div><strong>${escapeHtml(totals.messages)}</strong><span>留言</span></div>
+    <div><strong>${escapeHtml(totals.sessions)}</strong><span>会话</span></div>
+  `;
+}
+
+function renderAdminUsers(users) {
+  const list = document.querySelector("#adminUsers");
+
+  if (!list) {
+    return;
+  }
+
+  list.innerHTML = users.length
+    ? users
+        .map(
+          (user) => `
+            <article class="admin-item">
+              <div>
+                <strong>${escapeHtml(user.nickname)}</strong>
+                <span>${escapeHtml(user.email)}</span>
+              </div>
+              <time>${escapeHtml(user.time)}</time>
+            </article>
+          `
+        )
+        .join("")
+    : `<p class="admin-empty">暂无用户</p>`;
+}
+
+function renderAdminMessages(messages) {
+  const list = document.querySelector("#adminMessages");
+
+  if (!list) {
+    return;
+  }
+
+  list.innerHTML = messages.length
+    ? messages
+        .map(
+          (item) => `
+            <article class="admin-item admin-message-item">
+              <div>
+                <strong>${escapeHtml(item.name)}</strong>
+                <span>${escapeHtml(item.email || item.time)}</span>
+                <p>${escapeHtml(item.message)}</p>
+              </div>
+              <button class="message-delete" type="button" data-admin-delete-message="${escapeHtml(item.id)}">删除</button>
+            </article>
+          `
+        )
+        .join("")
+    : `<p class="admin-empty">暂无留言</p>`;
+
+  list.querySelectorAll("[data-admin-delete-message]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      await deleteAdminMessage(button.dataset.adminDeleteMessage);
+    });
+  });
+}
+
+async function deleteAdminMessage(id) {
+  const status = document.querySelector("#adminStatus");
+
+  try {
+    await apiFetch(`/api/admin/messages?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+    setText(status, "已删除留言。");
+    await setupAdminDashboard();
+  } catch (error) {
+    setText(status, error.message || "删除失败。");
+  }
+}
+
 function saveLocalUser(user) {
   localStorage.setItem("card-site-user", JSON.stringify(user));
   currentUser = { nickname: user.nickname, email: user.email };
   localStorage.setItem("card-site-session", JSON.stringify(currentUser));
+  localStorage.removeItem("card-site-guest");
 }
 
 function loginLocalUser(loginName, password) {
@@ -518,7 +691,7 @@ async function apiFetch(path, options = {}) {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const apiError = new Error(data.error || "服务器暂时不可用。");
+      const apiError = new Error(data.error || "服务暂不可用");
       apiError.isApi = true;
       throw apiError;
     }
@@ -555,6 +728,7 @@ function setupMusicControls() {
   const pageAudio = document.querySelector("#bgMusic");
   const controls = document.querySelectorAll("[data-music-toggle], #musicToggle");
   const statuses = document.querySelectorAll("[data-music-status], #musicStatus");
+  const music = getMusic();
 
   if (pageAudio) {
     pageAudio.hidden = true;
@@ -562,7 +736,7 @@ function setupMusicControls() {
   }
 
   statuses.forEach((status) => {
-    status.textContent = persistentMusic.paused ? "" : "音乐播放中";
+    status.textContent = music.paused ? "" : "音乐播放中";
   });
 
   controls.forEach((musicToggle) => {
@@ -572,10 +746,10 @@ function setupMusicControls() {
 
     musicToggle.dataset.bound = "true";
     musicToggle.addEventListener("click", async () => {
-      if (persistentMusic.paused) {
+      if (music.paused) {
         await playMusic();
       } else {
-        persistentMusic.pause();
+        music.pause();
         localStorage.setItem("card-site-music-playing", "false");
         setMusicStatus("音乐已暂停");
         updateMusicControls();
@@ -585,10 +759,19 @@ function setupMusicControls() {
 
   if (!musicEventsBound) {
     musicEventsBound = true;
-    persistentMusic.addEventListener("play", updateMusicControls);
-    persistentMusic.addEventListener("pause", updateMusicControls);
+    music.addEventListener("play", updateMusicControls);
+    music.addEventListener("pause", updateMusicControls);
+    music.addEventListener("timeupdate", persistMusicTime);
+    window.addEventListener("pagehide", persistMusicTime);
   }
+
   updateMusicControls();
+  tryAutoplayMusic();
+  bindMusicGestureResume();
+}
+
+function getMusic() {
+  return persistentMusic;
 }
 
 function ensureFloatingMusicControls() {
@@ -606,26 +789,69 @@ function ensureFloatingMusicControls() {
 }
 
 async function playMusic() {
-  try {
-    if (!musicHasLoaded) {
-      persistentMusic.load();
-      musicHasLoaded = true;
-    }
+  const music = getMusic();
 
-    persistentMusic.muted = false;
-    await persistentMusic.play();
+  try {
+    music.muted = false;
+    await music.play();
     localStorage.setItem("card-site-music-playing", "true");
     setMusicStatus("音乐播放中");
   } catch {
-    setMusicStatus("浏览器拦截了自动播放，请点播放按钮");
+    setMusicStatus("点击后播放");
   } finally {
     updateMusicControls();
   }
 }
 
+async function tryAutoplayMusic() {
+  if (musicAutoplayTried) {
+    return;
+  }
+
+  musicAutoplayTried = true;
+
+  try {
+    const music = getMusic();
+    music.muted = false;
+    await music.play();
+    localStorage.setItem("card-site-music-playing", "true");
+    setMusicStatus("音乐播放中");
+  } catch {
+    setMusicStatus("点击后播放");
+  } finally {
+    updateMusicControls();
+  }
+}
+
+function bindMusicGestureResume() {
+  if (musicGestureBound) {
+    return;
+  }
+
+  musicGestureBound = true;
+
+  const resume = async () => {
+    if (localStorage.getItem("card-site-music-playing") !== "false" && getMusic().paused) {
+      await playMusic();
+    }
+
+    if (!getMusic().paused) {
+      window.removeEventListener("pointerdown", resume);
+      window.removeEventListener("keydown", resume);
+      window.removeEventListener("touchstart", resume);
+    }
+  };
+
+  window.addEventListener("pointerdown", resume, { passive: true });
+  window.addEventListener("keydown", resume);
+  window.addEventListener("touchstart", resume, { passive: true });
+}
+
 function updateMusicControls() {
+  const music = getMusic();
+
   document.querySelectorAll("[data-music-toggle], #musicToggle").forEach((musicToggle) => {
-    musicToggle.textContent = persistentMusic.paused ? "播放音乐" : "暂停音乐";
+    musicToggle.textContent = music.paused ? "播放音乐" : "暂停音乐";
   });
 }
 
@@ -633,6 +859,14 @@ function setMusicStatus(text) {
   document.querySelectorAll("[data-music-status], #musicStatus").forEach((status) => {
     status.textContent = text;
   });
+}
+
+function persistMusicTime() {
+  const music = getMusic();
+
+  if (Number.isFinite(music.currentTime)) {
+    localStorage.setItem("card-site-music-time", String(music.currentTime));
+  }
 }
 
 function restoreMusicState() {
@@ -643,35 +877,14 @@ function restoreMusicState() {
   }
 }
 
-function persistMusicState() {
-  persistentMusic.addEventListener("timeupdate", () => {
-    if (!persistentMusic.paused && Number.isFinite(persistentMusic.currentTime)) {
-      localStorage.setItem("card-site-music-time", String(persistentMusic.currentTime));
-    }
-  });
-
-  window.addEventListener("pagehide", () => {
-    if (Number.isFinite(persistentMusic.currentTime)) {
-      localStorage.setItem("card-site-music-time", String(persistentMusic.currentTime));
-    }
-  });
-}
-
-function bindPointerResume() {
-  if (pointerResumeBound) {
-    return;
-  }
-
-  pointerResumeBound = true;
-  window.addEventListener("pointerdown", () => {
-    if (persistentMusic.paused && localStorage.getItem("card-site-music-playing") === "true") {
-      playMusic();
-    }
-  });
-}
-
 function setupReveal() {
-  document.querySelectorAll(".music-player, .section").forEach((item) => {
+  document.querySelectorAll(".reveal-card, .section").forEach((item) => {
     item.classList.add("is-visible");
   });
+}
+
+function setText(element, text) {
+  if (element) {
+    element.textContent = text;
+  }
 }

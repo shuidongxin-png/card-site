@@ -1,92 +1,67 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="晓染的个人名片主页，包含个人信息、联系方式和背景音乐。"
-    />
-    <title>晓染 - 个人名片</title>
-    <link rel="preload" href="assets/site-bg-fixed.jpg" as="image" />
+    <meta name="description" content="晓染的个人主页入口。" />
+    <title>晓染 - 入口</title>
+    <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
     <link rel="preload" href="assets/avatar.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#home" data-page="index.html">晓染</a>
-      <nav aria-label="主导航">
-        <a href="#home" data-page="index.html">首页</a>
-        <a href="#qq" data-page="qq.html">QQ 主页</a>
-        <a href="#account" data-page="account.html">登录</a>
-        <a href="#messages" data-page="messages.html">私信</a>
-        <a href="#skills" data-page="skills.html">技能</a>
-        <a href="#awards" data-page="awards.html">奖状</a>
-      </nav>
-    </header>
+  <body class="entry-page">
+    <main id="top" class="entry-shell">
+      <section class="entry-stage" aria-label="登录入口">
+        <div class="entry-art glass-panel reveal-card">
+          <div class="entry-avatar">
+            <img src="assets/avatar.jpg" alt="晓染头像" width="800" height="800" decoding="async" />
+          </div>
+          <p class="micro">XIAORAN / PERSONAL GATE</p>
+          <h1>晓染</h1>
+        </div>
 
-    <main id="top" class="home-main">
-      <section class="hero" aria-label="个人主页首屏">
-        <div class="hero-shade"></div>
-        <div class="hero-inner">
-          <div class="hero-copy">
-            <p class="eyebrow">Scorpio / QQ 3265176894</p>
-            <h1>晓染</h1>
-            <p class="intro">欢迎来到我的线上名片。</p>
-            <div class="actions">
-              <a class="button primary" href="#messages" data-page="messages.html">给我留言</a>
-              <a class="button secondary" href="#skills" data-page="skills.html">看看技能</a>
-            </div>
+        <div class="entry-form glass-panel reveal-card delay-1">
+          <div class="entry-mark" aria-hidden="true">N</div>
+          <h2>Welcome back</h2>
+          <div class="tabs" role="tablist" aria-label="账号表单">
+            <button class="tab active" type="button" data-tab="login">登录</button>
+            <button class="tab" type="button" data-tab="register">注册</button>
           </div>
 
-          <aside class="profile-card" aria-label="个人信息卡片">
-            <div class="avatar-wrap">
-              <img
-                src="assets/avatar.jpg"
-                alt="税冬鑫头像"
-                width="800"
-                height="800"
-                fetchpriority="high"
-                decoding="async"
-              />
-            </div>
-            <div>
-              <p class="card-kicker">个人信息</p>
-              <h2>税冬鑫</h2>
-              <p>昵称：晓染</p>
-              <p>QQ：3265176894</p>
-              <p>微信：sdx20039</p>
-            </div>
-            <ul class="quick-links">
-              <li><a href="mailto:3265176894@qq.com">3265176894@qq.com</a></li>
-              <li><button class="text-button" data-copy="3265176894">复制 QQ</button></li>
-              <li><button class="text-button" data-copy="sdx20039">复制微信</button></li>
-            </ul>
-            <p id="copyStatus" class="status" role="status" aria-live="polite"></p>
-          </aside>
-        </div>
-      </section>
+          <form id="loginForm" class="account-form">
+            <label>
+              邮箱或昵称
+              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" />
+            </label>
+            <label>
+              密码
+              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" />
+            </label>
+            <button class="button primary" type="submit">进入主页</button>
+          </form>
 
-      <section class="music-player" aria-label="背景音乐播放器">
-        <div>
-          <p class="eyebrow">Background Music</p>
-          <h2>红色高跟鞋</h2>
-        </div>
-        <div class="audio-box">
-          <audio id="bgMusic" controls loop preload="none" playsinline>
-            <source src="assets/bg-music.mp3" type="audio/mpeg" />
-          </audio>
-          <button id="musicToggle" class="button secondary" type="button">播放音乐</button>
-          <p id="musicStatus" class="mini-status" role="status" aria-live="polite"></p>
+          <form id="registerForm" class="account-form hidden">
+            <label>
+              昵称
+              <input name="nickname" autocomplete="nickname" placeholder="晓染" />
+            </label>
+            <label>
+              邮箱
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" />
+            </label>
+            <label>
+              密码
+              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" />
+            </label>
+            <button class="button primary" type="submit">创建并进入</button>
+          </form>
+
+          <button class="button secondary guest-button" type="button" data-guest-login>游客进入</button>
+          <p id="accountStatus" class="status" role="status" aria-live="polite"></p>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>© <span id="year"></span> 晓染. All rights reserved.</p>
-      <p class="beian">QQ：3265176894 / 微信：sdx20039</p>
-    </footer>
-
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>
