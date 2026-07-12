@@ -1,29 +1,62 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="晓染的个人主页入口。" />
     <title>晓染 - 入口</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="assets/site-bg-v3.jpg" as="image" />
+    <link rel="preload" href="assets/site-bg-roses.jpg" as="image" />
     <link rel="preload" href="assets/avatar.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="entry-page">
-    <main id="top" class="entry-shell">
-      <section class="entry-stage" aria-label="登录入口">
-        <div class="entry-art glass-panel reveal-card">
-          <div class="entry-avatar">
-            <img src="assets/avatar.jpg" alt="晓染头像" width="800" height="800" decoding="async" />
+    <main id="top" class="entry-split" aria-label="登录入口">
+      <!-- 左侧品牌区：参考 CareerCompass 开源登录布局，结合本站玻璃霓虹风格 -->
+      <aside class="entry-hero" aria-hidden="false">
+        <div class="entry-hero-glow entry-hero-glow-a" aria-hidden="true"></div>
+        <div class="entry-hero-glow entry-hero-glow-b" aria-hidden="true"></div>
+        <div class="entry-hero-grid" aria-hidden="true"></div>
+
+        <div class="entry-hero-top">
+          <div class="entry-brand">
+            <img class="entry-brand-mark" src="assets/avatar.jpg" alt="" width="36" height="36" decoding="async" />
+            <span>晓染 · Xiaoran</span>
           </div>
-          <p class="micro">XIAORAN / PERSONAL GATE</p>
-          <h1>晓染</h1>
         </div>
 
-        <div class="entry-form glass-panel reveal-card delay-1">
-          <div class="entry-mark" aria-hidden="true">N</div>
-          <h2>Welcome back</h2>
+        <div class="entry-hero-stage">
+          <div class="entry-avatar-wrap">
+            <div class="entry-avatar">
+              <img src="assets/avatar.jpg" alt="晓染头像" width="800" height="800" decoding="async" />
+            </div>
+            <div class="entry-orbit" aria-hidden="true"></div>
+          </div>
+          <p class="micro entry-hero-kicker">XIAORAN / PERSONAL GATE</p>
+          <h1 class="entry-hero-title">晓染</h1>
+          <p class="entry-hero-line">把灵感做成可见的作品 · 欢迎回来</p>
+        </div>
+
+        <div class="entry-hero-foot">
+          <span>Personal Card Site</span>
+          <span class="entry-hero-dot" aria-hidden="true">·</span>
+          <span>SCORPIO</span>
+        </div>
+      </aside>
+
+      <!-- 右侧表单区 -->
+      <section class="entry-panel">
+        <div class="entry-panel-inner">
+          <div class="entry-brand entry-brand-mobile">
+            <img class="entry-brand-mark" src="assets/avatar.jpg" alt="" width="36" height="36" decoding="async" />
+            <span>晓染 · Xiaoran</span>
+          </div>
+
+          <header class="entry-panel-head">
+            <h2 class="entry-panel-title">Welcome back</h2>
+            <p class="entry-panel-sub">登录后进入主页，或选择游客浏览</p>
+          </header>
+
           <div class="tabs" role="tablist" aria-label="账号表单">
             <button class="tab active" type="button" role="tab" aria-selected="true" data-tab="login">登录</button>
             <button class="tab" type="button" role="tab" aria-selected="false" data-tab="register">注册</button>
@@ -32,33 +65,83 @@
           <form id="loginForm" class="account-form">
             <label>
               邮箱或昵称
-              <input name="loginName" autocomplete="username" placeholder="3265176894@qq.com" required />
+              <input
+                name="loginName"
+                autocomplete="username"
+                placeholder="邮箱或昵称"
+                required
+                data-entry-field
+              />
             </label>
             <label>
               密码
-              <input name="loginPassword" type="password" autocomplete="current-password" placeholder="输入密码" required minlength="6" />
+              <div class="password-field">
+                <input
+                  name="loginPassword"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="输入密码"
+                  required
+                  minlength="6"
+                  data-entry-field
+                />
+                <button class="password-toggle" type="button" aria-label="显示密码" data-password-toggle>
+                  <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  <svg class="icon-eye-off hidden" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                </button>
+              </div>
             </label>
-            <button class="button primary" type="submit">进入主页</button>
+            <button class="button primary entry-submit" type="submit">进入主页</button>
           </form>
 
           <form id="registerForm" class="account-form hidden">
             <label>
               昵称
-              <input name="nickname" autocomplete="nickname" placeholder="晓染" required />
+              <input name="nickname" autocomplete="nickname" placeholder="晓染" required data-entry-field />
             </label>
             <label>
               邮箱
-              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+              <input name="email" type="email" autocomplete="email" placeholder="you@example.com" required data-entry-field />
             </label>
             <label>
               密码
-              <input name="password" type="password" autocomplete="new-password" placeholder="至少 6 位" required minlength="6" />
+              <div class="password-field">
+                <input
+                  name="password"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="至少 6 位"
+                  required
+                  minlength="6"
+                  data-entry-field
+                />
+                <button class="password-toggle" type="button" aria-label="显示密码" data-password-toggle>
+                  <svg class="icon-eye" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  <svg class="icon-eye-off hidden" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                  </svg>
+                </button>
+              </div>
             </label>
-            <button class="button primary" type="submit">创建并进入</button>
+            <button class="button primary entry-submit" type="submit">创建并进入</button>
           </form>
 
+          <div class="entry-divider" aria-hidden="true"><span>或</span></div>
+
           <button class="button secondary guest-button" type="button" data-guest-login>游客进入</button>
-          <p id="accountStatus" class="status" role="status" aria-live="polite"></p>
+          <p id="accountStatus" class="status entry-status" role="status" aria-live="polite"></p>
         </div>
       </section>
     </main>

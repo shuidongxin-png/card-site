@@ -5,3 +5,13 @@ compatibility_date = "2026-06-04"
 binding = "DB"
 database_name = "card_site_db"
 database_id = "dd23191e-87d4-4804-b066-d1ac98fd5743"
+
+# R2 当前未启用。以后开通 R2 时再取消下列三行注释。
+# [[r2_buckets]]
+# binding = "GALLERY_BUCKET"
+# bucket_name = "card-site-gallery"
+
+# 可选：R2 自定义域名 / 公共访问前缀（不填则走 /api/media?key=）
+# [vars]
+# GALLERY_PUBLIC_BASE = "https://media.example.com"
+# ADMIN_EMAILS = "you@example.com"

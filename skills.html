@@ -1,12 +1,14 @@
-<!doctype html>
+﻿﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="晓染的技能作品展示。" />
     <title>晓染 - 技能</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/site-bg-sakura.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="assets/vendor/aos/aos.css" />
   </head>
   <body>
     <header class="site-header">
@@ -17,65 +19,224 @@
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#fitness" data-page="fitness.html">我的健身之路</a>
         <a href="#logout" data-auth-action="logout">登出</a>
       </nav>
     </header>
 
     <main id="top">
-      <section id="skills" class="section">
-        <div class="section-heading glass-panel reveal-card">
-          <div>
-            <p class="micro">Skill Matrix</p>
+      <section id="skills" class="section gallery-section">
+        <!-- 切入动画：michalsnik/aos（Animate On Scroll）https://github.com/michalsnik/aos -->
+        <header class="gallery-head" data-aos="fade-down" data-aos-duration="700">
+          <div class="gallery-head-copy">
+            <p class="micro gallery-kicker">Skill Matrix · Magazine</p>
             <h1>技能作品</h1>
+            <p class="gallery-lead">海报与视觉方案完整呈现 · 不裁切原图比例</p>
           </div>
-        </div>
+          <div class="gallery-head-meta glass-panel" aria-label="作品统计">
+            <div>
+              <strong data-gallery-count="skill">10</strong>
+              <span>作品</span>
+            </div>
+            <div>
+              <strong>视觉</strong>
+              <span>主方向</span>
+            </div>
+          </div>
+        </header>
 
-        <div class="card-grid skills-grid">
-          <article class="showcase-card skill-card glass-panel reveal-card">
-            <img src="assets/skill-display/skill-1-full.jpg" alt="圣诞主题海报作品" width="904" height="1200" loading="eager" decoding="async" />
-            <div>
-              <span class="tag">海报制作</span>
-              <h2>节日主题视觉</h2>
+        <article class="skill-feature glass-panel" data-aos="zoom-in-up" data-aos-duration="900" data-aos-delay="80">
+          <div class="skill-feature-frame">
+            <img
+              src="assets/skill-display/skill-1-full.jpg"
+              alt="圣诞主题海报作品"
+              width="904"
+              height="1200"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <div class="skill-feature-copy">
+            <span class="tag">海报制作 · 主推</span>
+            <h2>节日主题视觉</h2>
+            <p>圣诞礼赠主视觉 · 插画与排版结合，完整保留海报构图。</p>
+          </div>
+        </article>
+
+        <div class="skills-masonry" aria-label="技能作品墙" data-gallery-mount="skill" data-static-count="10">
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="0">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-2-cropped.jpg"
+                alt="智慧抗衰主题演示页面"
+                width="720"
+                height="1056"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">美业设计</span>
+              <h2>美业设计</h2>
+              <p>美容护肤主题视觉表达</p>
             </div>
           </article>
-          <article class="showcase-card skill-card skill-card-crop glass-panel reveal-card delay-1">
-            <img src="assets/skill-display/skill-2-cropped.jpg" alt="智慧抗衰主题演示页面" width="720" height="1056" loading="lazy" decoding="async" />
-            <div>
-              <span class="tag">信息排版</span>
-              <h2>商业页面表达</h2>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="80">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-3-cos-fashion.jpg"
+                alt="COS女装主题视觉作品"
+                width="760"
+                height="569"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">COS女装</span>
+              <h2>COS女装造型</h2>
+              <p>角色装扮与女装风格呈现</p>
             </div>
           </article>
-          <article class="showcase-card skill-card glass-panel reveal-card delay-2">
-            <img src="assets/skill-display/skill-3-cropped.jpg" alt="美容项目宣传海报" width="760" height="1075" loading="lazy" decoding="async" />
-            <div>
-              <span class="tag">宣传物料</span>
-              <h2>项目视觉整合</h2>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="160">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-6-cropped.jpg"
+                alt="游戏个人主页截图"
+                width="1100"
+                height="546"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-          </article>
-          <article class="showcase-card skill-card glass-panel reveal-card delay-3">
-            <img src="assets/skill-display/skill-4-full.jpg" alt="空间平面图纸" width="980" height="749" loading="lazy" decoding="async" />
-            <div>
-              <span class="tag">图纸整理</span>
-              <h2>空间布局表达</h2>
-            </div>
-          </article>
-          <article class="showcase-card skill-card skill-card-wide glass-panel reveal-card delay-1">
-            <img src="assets/skill-display/skill-6-cropped.jpg" alt="游戏个人主页截图" width="1100" height="546" loading="lazy" decoding="async" />
-            <div>
+            <div class="poster-caption">
               <span class="tag">游戏主页</span>
               <h2>个人战绩界面</h2>
+              <p>横版界面信息层次</p>
             </div>
           </article>
-          <article class="showcase-card skill-card glass-panel reveal-card">
-            <img src="assets/skill-display/skill-5-cropped.jpg" alt="中国国际大学生创新大赛项目海报" width="900" height="1289" loading="lazy" decoding="async" />
-            <div>
-              <span class="tag">创新项目</span>
-              <h2>农田变量施药方案</h2>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="240">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-4-full.jpg"
+                alt="空间平面图纸"
+                width="980"
+                height="749"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">图纸整理</span>
+              <h2>空间布局表达</h2>
+              <p>平面与功能分区</p>
             </div>
           </article>
-          <article class="placeholder-card glass-panel reveal-card delay-1">
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="320">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-5-cropped.jpg"
+                alt="中国国际大学生创新大赛项目海报"
+                width="900"
+                height="1289"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">海报设计</span>
+              <h2>海报设计</h2>
+              <p>项目主视觉与版式设计</p>
+            </div>
+          </article>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="400">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-7-driver-license.jpg"
+                alt="机动车驾驶证"
+                width="900"
+                height="675"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">生活技能</span>
+              <h2>机动车驾驶证</h2>
+              <p>持证上岗 · 出行能力</p>
+            </div>
+          </article>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="480">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-8-fitness.jpg"
+                alt="健身训练"
+                width="323"
+                height="720"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">健身</span>
+              <h2>力量训练</h2>
+              <p>坚持锻炼 · 自律生活</p>
+            </div>
+          </article>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="520">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-9-tour-guide.jpg"
+                alt="导游讲解服务"
+                width="427"
+                height="760"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">导游</span>
+              <h2>导游讲解</h2>
+              <p>带团服务 · 景点解说</p>
+            </div>
+          </article>
+
+          <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="560">
+            <div class="poster-frame">
+              <img
+                src="assets/skill-display/skill-10-hair-design.jpg"
+                alt="发型设计作品"
+                width="760"
+                height="569"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="poster-caption">
+              <span class="tag">发型设计</span>
+              <h2>发型设计</h2>
+              <p>造型搭配 · 风格塑造</p>
+            </div>
+          </article>
+
+          <article
+            class="poster-card poster-add placeholder-card glass-panel gallery-upload-slot"
+            data-aos="fade-up"
+            data-aos-delay="600"
+            data-gallery-upload="skill"
+            aria-label="上传新作品"
+          >
+            <input class="gallery-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
             <span>+</span>
-            <strong>新增作品位</strong>
+            <strong>上传作品</strong>
+            <em data-upload-status>管理员登录后点击上传</em>
           </article>
         </div>
       </section>
@@ -85,6 +246,7 @@
       <p>© <span id="year"></span> 晓染</p>
     </footer>
 
+    <script src="assets/vendor/aos/aos.js" defer></script>
     <script src="script.js" defer></script>
   </body>
 </html>

@@ -6,10 +6,7 @@ let adminAccessCheckedFor = "";
 let adminAccessChecking = false;
 
 const pageCache = new Map();
-const persistentMusic = new Audio("assets/bg-music.mp3");
-persistentMusic.loop = true;
-persistentMusic.preload = "auto";
-persistentMusic.volume = 0.72;
+let persistentMusic = null;
 
 let musicEventsBound = false;
 let musicAutoplayTried = false;
@@ -40,7 +37,9 @@ async function init() {
   updateNavAuthLink();
   await setupMessages();
   await routeInitialHash();
-  tryAutoplayMusic();
+  await setupGallerySections();
+  // Don't auto-download music on first paint; wait for user gesture via controls
+  updateMusicControls();
   prefetchPages();
 }
 
@@ -55,16 +54,26 @@ function bindPage() {
   setupLogout();
   setupMusicControls();
   setupAdminDashboard();
+  setupGalleryUploadUI();
   setupReveal();
+  // Gallery render is async; kick it after SPA swaps too
+  setupGallerySections();
 }
 
 function updateBodyStateClasses() {
   document.body.classList.toggle("has-home-main", Boolean(document.querySelector(".home-main")));
-  document.body.classList.toggle("has-card-grid", Boolean(document.querySelector(".card-grid")));
+  document.body.classList.toggle(
+    "has-card-grid",
+    Boolean(document.querySelector(".card-grid, .skills-masonry, .skills-bento, .awards-layout, .awards-wall"))
+  );
   document.body.classList.toggle("has-message-layout", Boolean(document.querySelector(".message-layout")));
   document.body.classList.toggle("has-skills-page", Boolean(document.querySelector("#skills")));
   document.body.classList.toggle("has-awards-page", Boolean(document.querySelector("#awards")));
-  document.body.classList.toggle("has-entry-page", Boolean(document.querySelector(".entry-shell")));
+  document.body.classList.toggle("has-fitness-page", Boolean(document.querySelector("#fitness")));
+  document.body.classList.toggle(
+    "has-entry-page",
+    Boolean(document.querySelector(".entry-split, .entry-shell, .entry-page"))
+  );
   document.body.classList.toggle("has-admin-page", Boolean(document.querySelector("#adminDashboard")));
 }
 
@@ -207,6 +216,7 @@ function getPageFromHash() {
     "#messages": "messages.html",
     "#skills": "skills.html",
     "#awards": "awards.html",
+    "#fitness": "fitness.html",
     "#admin": "admin.html",
   };
 
@@ -223,6 +233,7 @@ function getHashForPage(page) {
     "messages.html": "#messages",
     "skills.html": "#skills",
     "awards.html": "#awards",
+    "fitness.html": "#fitness",
     "admin.html": "#admin",
   };
 
@@ -275,7 +286,10 @@ async function fetchPage(page) {
 }
 
 function prefetchPages() {
-  const pages = ["index.html", "home.html", "school.html", "messages.html", "skills.html", "awards.html", "admin.html"];
+  // Only warm pages the user is likely to open next — avoid pulling everything on first paint
+  const current = getCurrentPage();
+  const all = ["home.html", "skills.html", "awards.html", "fitness.html", "school.html", "messages.html"];
+  const pages = all.filter((page) => page !== current).slice(0, 3);
 
   const run = () => {
     pages.forEach((page) => {
@@ -286,14 +300,15 @@ function prefetchPages() {
   };
 
   if ("requestIdleCallback" in window) {
-    requestIdleCallback(run, { timeout: 1200 });
+    requestIdleCallback(run, { timeout: 2500 });
   } else {
-    window.setTimeout(run, 600);
+    window.setTimeout(run, 1500);
   }
 }
 
 function setupActiveNav() {
   const currentPage = getPageFromHash() || getCurrentPage();
+  let activeLink = null;
 
   document.querySelectorAll(".site-header nav a").forEach((link) => {
     const linkPage = normalizePage(link.dataset.page || link.getAttribute("href"));
@@ -303,10 +318,21 @@ function setupActiveNav() {
 
     if (isActive) {
       link.setAttribute("aria-current", "page");
+      activeLink = link;
     } else {
       link.removeAttribute("aria-current");
     }
   });
+
+  if (activeLink) {
+    const nav = activeLink.closest("nav");
+
+    if (nav && nav.scrollWidth > nav.clientWidth) {
+      requestAnimationFrame(() => {
+        nav.scrollLeft = activeLink.offsetLeft - (nav.clientWidth - activeLink.clientWidth) / 2;
+      });
+    }
+  }
 }
 
 function updateNavAuthLink() {
@@ -382,6 +408,9 @@ async function checkAdminAccess() {
     adminAccessCheckedFor = email;
     adminAccessChecking = false;
     updateNavAuthLink();
+    setupGalleryUploadUI();
+    // Re-render dynamic cards so delete buttons appear for admins
+    setupGallerySections();
   }
 }
 
@@ -495,6 +524,9 @@ function setupAccountForms() {
   loginForm.dataset.bound = "true";
   registerForm.dataset.bound = "true";
 
+  setupPasswordToggles();
+  setupEntryFieldFocus();
+
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const isLogin = tab.dataset.tab === "login";
@@ -563,6 +595,49 @@ function setupAccountForms() {
     } catch (error) {
       accountStatus.textContent = error.isNetwork ? "服务暂不可用，请稍后再试" : error.message || "账号或密码不对";
     }
+  });
+}
+
+function setupPasswordToggles() {
+  document.querySelectorAll("[data-password-toggle]").forEach((button) => {
+    if (button.dataset.bound === "true") {
+      return;
+    }
+
+    button.dataset.bound = "true";
+    button.addEventListener("click", () => {
+      const field = button.closest(".password-field");
+      const input = field?.querySelector("input");
+      const eye = button.querySelector(".icon-eye");
+      const eyeOff = button.querySelector(".icon-eye-off");
+
+      if (!input) {
+        return;
+      }
+
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      button.setAttribute("aria-label", show ? "隐藏密码" : "显示密码");
+      eye?.classList.toggle("hidden", show);
+      eyeOff?.classList.toggle("hidden", !show);
+      document.body.classList.toggle("entry-password-visible", show && document.body.classList.contains("has-entry-page"));
+    });
+  });
+}
+
+function setupEntryFieldFocus() {
+  document.querySelectorAll("[data-entry-field]").forEach((input) => {
+    if (input.dataset.focusBound === "true") {
+      return;
+    }
+
+    input.dataset.focusBound = "true";
+    input.addEventListener("focus", () => {
+      document.body.classList.add("entry-typing");
+    });
+    input.addEventListener("blur", () => {
+      document.body.classList.remove("entry-typing");
+    });
   });
 }
 
@@ -721,32 +796,82 @@ async function setupAdminDashboard() {
   }
 
   const status = document.querySelector("#adminStatus");
+  setupGalleryUploadUI();
 
   if (isStaticPreview()) {
     renderAdminSummary();
     renderAdminUsers([]);
     renderAdminMessages([]);
-    setText(status, "本地静态预览不运行管理接口。");
+    renderAdminGallery(loadLocalGallery());
+    setText(status, "本地静态预览：上传会暂存浏览器，不写云端。");
     return;
   }
 
   try {
-    const [summary, users, messages] = await Promise.all([
+    const [summary, users, messages, gallery] = await Promise.all([
       apiFetch("/api/admin/summary"),
       apiFetch("/api/admin/users"),
       apiFetch("/api/admin/messages"),
+      apiFetch("/api/admin/gallery").catch(() => ({ items: [] })),
     ]);
 
     renderAdminSummary(summary);
     renderAdminUsers(users.users || []);
     renderAdminMessages(messages.messages || []);
+    renderAdminGallery(gallery.items || []);
     setText(status, summary.admin ? `当前管理员：${summary.admin.nickname}` : "");
   } catch (error) {
     renderAdminSummary();
     renderAdminUsers([]);
     renderAdminMessages([]);
+    renderAdminGallery([]);
     setText(status, error.message || "请用管理员账号登录后查看。");
   }
+}
+
+function renderAdminGallery(items) {
+  const list = document.querySelector("#adminGalleryList");
+  const status = document.querySelector("#adminGalleryStatus");
+
+  if (!list) {
+    return;
+  }
+
+  if (!items.length) {
+    list.innerHTML = `<p class="status">还没有通过上传新增的作品 / 证书。</p>`;
+    setText(status, "");
+    return;
+  }
+
+  list.innerHTML = items
+    .map(
+      (item) => `
+      <article class="admin-item admin-gallery-item">
+        <img src="${escapeHtml(item.imageUrl)}" alt="" width="64" height="64" loading="lazy" />
+        <div>
+          <strong>${escapeHtml(item.title)}</strong>
+          <span>${escapeHtml(item.kind)} · ${escapeHtml(item.tag || "")}</span>
+        </div>
+        ${
+          adminAccess || isStaticPreview()
+            ? `<button class="message-delete" type="button" data-gallery-delete="${escapeHtml(item.id)}">删除</button>`
+            : ""
+        }
+      </article>
+    `
+    )
+    .join("");
+
+  list.querySelectorAll("[data-gallery-delete]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const id = button.dataset.galleryDelete;
+      const row = items.find((item) => String(item.id) === String(id));
+      await deleteGalleryItem(id, row?.kind || "skill");
+      await setupAdminDashboard();
+    });
+  });
+
+  setText(status, `共 ${items.length} 条动态图库记录`);
 }
 
 function renderAdminSummary(summary = null) {
@@ -835,11 +960,12 @@ async function deleteAdminMessage(id) {
 
 async function apiFetch(path, options = {}) {
   try {
+    const isForm = options.formData === true || (typeof FormData !== "undefined" && options.body instanceof FormData);
     const response = await fetch(path, {
       method: options.method || "GET",
       credentials: "same-origin",
-      headers: options.body ? { "Content-Type": "application/json" } : undefined,
-      body: options.body ? JSON.stringify(options.body) : undefined,
+      headers: isForm || !options.body ? undefined : { "Content-Type": "application/json" },
+      body: options.body ? (isForm ? options.body : JSON.stringify(options.body)) : undefined,
     });
     const data = await response.json().catch(() => ({}));
 
@@ -862,7 +988,8 @@ async function apiFetch(path, options = {}) {
 }
 
 function isStaticPreview() {
-  return ["127.0.0.1", "localhost"].includes(location.hostname);
+  // file:// or plain static server without Pages Functions
+  return location.protocol === "file:" || ["127.0.0.1", "localhost"].includes(location.hostname);
 }
 
 function escapeHtml(value) {
@@ -925,6 +1052,15 @@ function setupMusicControls() {
 }
 
 function getMusic() {
+  if (!persistentMusic) {
+    // Defer loading ~700KB audio until the user actually interacts with music
+    persistentMusic = new Audio("assets/bg-music.mp3");
+    persistentMusic.loop = true;
+    persistentMusic.preload = "none";
+    persistentMusic.volume = 0.72;
+    restoreMusicState();
+  }
+
   return persistentMusic;
 }
 
@@ -1020,6 +1156,10 @@ function persistMusicTime() {
 }
 
 function restoreMusicState() {
+  if (!persistentMusic) {
+    return;
+  }
+
   const savedTime = Number(localStorage.getItem("card-site-music-time") || "0");
 
   if (Number.isFinite(savedTime) && savedTime > 0) {
@@ -1027,9 +1167,360 @@ function restoreMusicState() {
   }
 }
 
+/* ========== Gallery upload (skills / awards) → D1 + R2 ========== */
+
+const GALLERY_LOCAL_KEY = "card-site-gallery-items";
+
+async function setupGallerySections() {
+  const skillsMount = document.querySelector("[data-gallery-mount='skill']");
+  const awardsMount = document.querySelector("[data-gallery-mount='award']");
+
+  if (!skillsMount && !awardsMount) {
+    return;
+  }
+
+  if (skillsMount) {
+    await renderGalleryMount(skillsMount, "skill");
+  }
+
+  if (awardsMount) {
+    await renderGalleryMount(awardsMount, "award");
+  }
+
+  setupGalleryUploadUI();
+  setupAosAnimations();
+}
+
+async function renderGalleryMount(mount, kind) {
+  const items = await getGalleryItems(kind);
+  const staticCount = Number(mount.dataset.staticCount || "0");
+  const total = staticCount + items.length;
+
+  document.querySelectorAll(`[data-gallery-count='${kind}']`).forEach((el) => {
+    el.textContent = String(total).padStart(2, "0");
+  });
+
+  // Remove previously injected dynamic cards (keep static HTML + upload slot)
+  mount.querySelectorAll("[data-gallery-id]").forEach((node) => node.remove());
+
+  const uploadSlot = mount.querySelector("[data-gallery-upload]");
+  const fragment = document.createDocumentFragment();
+
+  items.forEach((item, index) => {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = renderGalleryCard(item, kind, index).trim();
+    const card = wrap.firstElementChild;
+
+    if (!card) {
+      return;
+    }
+
+    card.querySelectorAll("[data-gallery-delete]").forEach((button) => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        await deleteGalleryItem(button.dataset.galleryDelete, kind);
+      });
+    });
+
+    fragment.appendChild(card);
+  });
+
+  if (uploadSlot) {
+    mount.insertBefore(fragment, uploadSlot);
+  } else {
+    mount.appendChild(fragment);
+  }
+}
+
+function renderGalleryCard(item, kind, index) {
+  const delay = Math.min(index * 80, 400);
+  const canDelete = Boolean(adminAccess);
+  const deleteBtn = canDelete
+    ? `<button class="gallery-delete" type="button" data-gallery-delete="${escapeHtml(item.id)}" aria-label="删除">删除</button>`
+    : "";
+
+  if (kind === "skill") {
+    return `
+      <article class="poster-card glass-panel" data-aos="fade-up" data-aos-delay="${delay}" data-gallery-id="${escapeHtml(item.id)}">
+        <div class="poster-frame">
+          <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" />
+        </div>
+        <div class="poster-caption">
+          <span class="tag">${escapeHtml(item.tag || "作品")}</span>
+          <h2>${escapeHtml(item.title)}</h2>
+          ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
+          ${deleteBtn}
+        </div>
+      </article>
+    `;
+  }
+
+  return `
+    <article class="award-tile glass-panel" data-aos="flip-up" data-aos-delay="${delay}" data-gallery-id="${escapeHtml(item.id)}">
+      <div class="award-tile-media">
+        <img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.title)}" loading="lazy" decoding="async" />
+      </div>
+      <div class="award-tile-body">
+        <span class="tag">${escapeHtml(item.tag || "证书")}</span>
+        <h2>${escapeHtml(item.title)}</h2>
+        ${deleteBtn}
+      </div>
+    </article>
+  `;
+}
+
+async function getGalleryItems(kind) {
+  if (isStaticPreview()) {
+    return loadLocalGallery().filter((item) => item.kind === kind);
+  }
+
+  try {
+    const data = await apiFetch(`/api/gallery?kind=${encodeURIComponent(kind)}`);
+    return Array.isArray(data.items) ? data.items : [];
+  } catch {
+    // Offline / API not migrated yet — fall back to browser-local uploads
+    return loadLocalGallery().filter((item) => item.kind === kind);
+  }
+}
+
+function loadLocalGallery() {
+  try {
+    return JSON.parse(localStorage.getItem(GALLERY_LOCAL_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalGallery(items) {
+  localStorage.setItem(GALLERY_LOCAL_KEY, JSON.stringify(items));
+}
+
+function setupGalleryUploadUI() {
+  document.querySelectorAll("[data-gallery-upload]").forEach((slot) => {
+    if (slot.dataset.bound === "true") {
+      return;
+    }
+
+    slot.dataset.bound = "true";
+    const kind = slot.dataset.galleryUpload;
+    const input = slot.querySelector('input[type="file"]');
+
+    // Admins online, or anyone in local/static preview (saved to browser only)
+    const allowUpload = Boolean(adminAccess) || isStaticPreview() || location.protocol === "file:";
+    slot.classList.toggle("is-uploadable", allowUpload);
+
+    slot.addEventListener("click", async () => {
+      if (!(adminAccess || isStaticPreview() || location.protocol === "file:")) {
+        setText(slot.querySelector("[data-upload-status]"), "请先用管理员账号登录");
+        return;
+      }
+
+      if (!input) {
+        return;
+      }
+
+      input.click();
+    });
+
+    if (input && input.dataset.bound !== "true") {
+      input.dataset.bound = "true";
+      input.addEventListener("change", async () => {
+        const file = input.files?.[0];
+        input.value = "";
+
+        if (!file) {
+          return;
+        }
+
+        await uploadGalleryItem(kind, file, slot);
+      });
+    }
+  });
+}
+
+async function uploadGalleryItem(kind, file, slot) {
+  const status = slot.querySelector("[data-upload-status]");
+  const maxBytes = 4.5 * 1024 * 1024;
+
+  if (!file.type.startsWith("image/")) {
+    setText(status, "请选择图片文件");
+    return;
+  }
+
+  if (file.size > maxBytes) {
+    setText(status, "图片请小于 4.5MB");
+    return;
+  }
+
+  setText(status, "上传中…");
+  slot.classList.add("is-uploading");
+
+  const titleDefault = file.name.replace(/\.[^.]+$/, "").slice(0, 40) || (kind === "skill" ? "新作品" : "新证书");
+  const title = window.prompt("标题", titleDefault) || titleDefault;
+  const tag = window.prompt("标签", kind === "skill" ? "作品" : "证书") || (kind === "skill" ? "作品" : "证书");
+  const description = kind === "skill" ? window.prompt("简介（可留空）", "") || "" : "";
+
+  try {
+    const form = new FormData();
+    form.append("kind", kind);
+    form.append("title", title);
+    form.append("tag", tag);
+    form.append("description", description);
+    form.append("file", file);
+
+    // Prefer cloud API whenever not opening as a raw file:// page
+    if (location.protocol !== "file:") {
+      try {
+        await apiFetch("/api/admin/gallery", {
+          method: "POST",
+          body: form,
+          formData: true,
+        });
+        setText(status, "上传成功");
+        await setupGallerySections();
+        return;
+      } catch (error) {
+        // Local python server / missing R2 → keep a browser fallback so the slot is still usable
+        if (!error.isNetwork && error.isApi) {
+          throw error;
+        }
+      }
+    }
+
+    const dataUrl = await readFileAsDataUrl(file);
+    const items = loadLocalGallery();
+    items.unshift({
+      id: `local-${Date.now()}`,
+      kind,
+      title,
+      tag,
+      description,
+      imageUrl: dataUrl,
+      createdAt: new Date().toISOString(),
+    });
+    saveLocalGallery(items);
+    setText(status, "已保存到本机（离线/本地预览）");
+    await setupGallerySections();
+  } catch (error) {
+    setText(status, error.isNetwork ? "服务暂不可用或未配置 R2" : error.message || "上传失败");
+  } finally {
+    slot.classList.remove("is-uploading");
+  }
+}
+
+async function deleteGalleryItem(id, kind) {
+  if (!id || !window.confirm("确定删除这项内容吗？")) {
+    return;
+  }
+
+  try {
+    if (isStaticPreview() || String(id).startsWith("local-")) {
+      saveLocalGallery(loadLocalGallery().filter((item) => String(item.id) !== String(id)));
+    } else {
+      await apiFetch(`/api/admin/gallery?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    }
+
+    await setupGallerySections();
+  } catch (error) {
+    window.alert(error.message || "删除失败");
+  }
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("读取图片失败"));
+    reader.readAsDataURL(file);
+  });
+}
+
 function setupReveal() {
   document.querySelectorAll(".reveal-card, .section").forEach((item) => {
     item.classList.add("is-visible");
+  });
+
+  // Open-source enter animations: AOS (https://github.com/michalsnik/aos)
+  setupAosAnimations();
+}
+
+let aosLoadPromise = null;
+
+function ensureAosAssets() {
+  if (window.AOS) {
+    return Promise.resolve(window.AOS);
+  }
+
+  if (aosLoadPromise) {
+    return aosLoadPromise;
+  }
+
+  aosLoadPromise = new Promise((resolve) => {
+    const existingCss = document.querySelector('link[data-aos-css]');
+    if (!existingCss) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "assets/vendor/aos/aos.css";
+      link.dataset.aosCss = "true";
+      document.head.appendChild(link);
+    }
+
+    const existingScript = document.querySelector("script[data-aos-js]");
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(window.AOS || null), { once: true });
+      if (window.AOS) {
+        resolve(window.AOS);
+      }
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "assets/vendor/aos/aos.js";
+    script.defer = true;
+    script.dataset.aosJs = "true";
+    script.onload = () => resolve(window.AOS || null);
+    script.onerror = () => resolve(null);
+    document.head.appendChild(script);
+  });
+
+  return aosLoadPromise;
+}
+
+async function setupAosAnimations() {
+  const hasAosNodes = document.querySelector("[data-aos]");
+  if (!hasAosNodes) {
+    return;
+  }
+
+  const AOS = await ensureAosAssets();
+  if (!AOS) {
+    return;
+  }
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!window.__cardSiteAosReady) {
+    AOS.init({
+      duration: 780,
+      easing: "ease-out-cubic",
+      once: true,
+      offset: 48,
+      delay: 0,
+      disable: reduceMotion,
+    });
+    window.__cardSiteAosReady = true;
+  } else {
+    AOS.refreshHard();
+  }
+
+  // After SPA swap, force a second refresh once images settle
+  window.requestAnimationFrame(() => {
+    try {
+      AOS.refresh();
+    } catch {
+      /* ignore */
+    }
   });
 }
 

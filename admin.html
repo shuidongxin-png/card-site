@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="晓染个人主页管理面板。" />
     <title>晓染 - 管理</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -17,6 +17,7 @@
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#fitness" data-page="fitness.html">我的健身之路</a>
         <a href="#admin" data-page="admin.html">管理</a>
         <a href="#logout" data-auth-action="logout">登出</a>
       </nav>
@@ -52,6 +53,31 @@
             <p class="micro">Messages</p>
             <h2>私信留言</h2>
             <div id="adminMessages" class="admin-list"></div>
+          </section>
+
+          <section class="admin-card admin-card-wide glass-panel reveal-card delay-1">
+            <p class="micro">Gallery</p>
+            <h2>作品 / 证书上传</h2>
+            <p class="section-note admin-gallery-note">
+              图片写入 Cloudflare R2，标题等元数据写入 D1。本地预览会先存浏览器，上线后需配置 R2 并执行
+              <code>migrations/0002_gallery.sql</code>。
+            </p>
+            <div class="admin-upload-grid">
+              <label class="admin-upload-card glass-panel gallery-upload-slot" data-gallery-upload="skill">
+                <input class="gallery-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+                <span class="micro">Skills</span>
+                <strong>上传技能作品</strong>
+                <em data-upload-status>JPG / PNG / WebP · ≤ 4.5MB</em>
+              </label>
+              <label class="admin-upload-card glass-panel gallery-upload-slot" data-gallery-upload="award">
+                <input class="gallery-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+                <span class="micro">Awards</span>
+                <strong>上传奖状证书</strong>
+                <em data-upload-status>JPG / PNG / WebP · ≤ 4.5MB</em>
+              </label>
+            </div>
+            <div id="adminGalleryList" class="admin-list"></div>
+            <p id="adminGalleryStatus" class="status" role="status" aria-live="polite"></p>
           </section>
         </div>
       </section>

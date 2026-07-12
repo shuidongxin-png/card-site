@@ -2,11 +2,13 @@
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="晓染的奖状与证书展示。" />
     <title>晓染 - 奖状</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="assets/site-bg-sakura.jpg" as="image" />
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="assets/vendor/aos/aos.css" />
   </head>
   <body>
     <header class="site-header">
@@ -17,54 +19,160 @@
         <a href="#messages" data-page="messages.html">私信</a>
         <a href="#skills" data-page="skills.html">技能</a>
         <a href="#awards" data-page="awards.html">奖状</a>
+        <a href="#fitness" data-page="fitness.html">我的健身之路</a>
         <a href="#logout" data-auth-action="logout">登出</a>
       </nav>
     </header>
 
     <main id="top">
-      <section id="awards" class="section">
-        <div class="section-heading glass-panel reveal-card">
-          <div>
-            <p class="micro">Awards Archive</p>
+      <section id="awards" class="section gallery-section awards-archive">
+        <header class="gallery-head" data-aos="fade-right" data-aos-duration="720">
+          <div class="gallery-head-copy">
+            <p class="micro gallery-kicker">Awards Archive</p>
             <h1>奖状证书</h1>
+            <p class="gallery-lead">荣誉 · 竞赛 · 证书 · 档案式陈列</p>
           </div>
-        </div>
+          <div class="gallery-head-meta glass-panel" aria-label="证书统计">
+            <div>
+              <strong data-gallery-count="award">10</strong>
+              <span>证书</span>
+            </div>
+            <div>
+              <strong>档案</strong>
+              <span>陈列</span>
+            </div>
+          </div>
+        </header>
 
-        <div class="card-grid award-grid">
-          <article class="showcase-card award-card glass-panel reveal-card">
-            <div class="award-media">
-              <img src="assets/card-thumbs/award-1.jpg" alt="英语四级成绩截图" width="620" height="760" loading="eager" decoding="async" />
+        <div class="awards-layout" aria-label="奖状档案墙">
+          <!-- 主推：挑战杯金奖 -->
+          <article class="award-hero glass-panel" data-aos="fade-left" data-aos-duration="900" data-aos-delay="100">
+            <div class="award-hero-media">
+              <img
+                src="assets/card-thumbs/award-10-challenge-cup-gold.jpg"
+                alt="挑战杯大学生创业计划竞赛校赛金奖证书"
+                width="800"
+                height="620"
+                loading="eager"
+                decoding="async"
+              />
             </div>
-            <h2>英语四级成绩</h2>
-          </article>
-          <article class="showcase-card award-card glass-panel reveal-card delay-1">
-            <div class="award-media">
-              <img src="assets/card-thumbs/award-2.jpg" alt="优秀个人荣誉证书" width="760" height="623" loading="lazy" decoding="async" />
+            <div class="award-hero-copy">
+              <span class="tag">校级 · 竞赛</span>
+              <h2>校级 · 挑战杯金奖</h2>
+              <p>《虫谱智链——农田变量施药防护方案》· 2026 年校赛金奖</p>
+              <ul class="award-hero-meta">
+                <li><span>类型</span><strong>创业竞赛</strong></li>
+                <li><span>级别</span><strong>校级 · 金奖</strong></li>
+              </ul>
             </div>
-            <h2>优秀个人</h2>
           </article>
-          <article class="showcase-card award-card glass-panel reveal-card delay-2">
-            <div class="award-media">
-              <img src="assets/card-thumbs/award-3.jpg" alt="中国国际大学生创新大赛证书" width="760" height="623" loading="lazy" decoding="async" />
-            </div>
-            <h2>创新大赛银奖</h2>
-          </article>
-          <article class="showcase-card award-card glass-panel reveal-card delay-3">
-            <div class="award-media">
-              <img src="assets/card-thumbs/award-4.jpg" alt="蓝桥杯获奖证书" width="640" height="780" loading="lazy" decoding="async" />
-            </div>
-            <h2>蓝桥杯三等奖</h2>
-          </article>
-          <article class="showcase-card award-card glass-panel reveal-card">
-            <div class="award-media">
-              <img src="assets/card-thumbs/award-5.jpg" alt="春日光影故事征文优秀作品奖证书" width="760" height="623" loading="lazy" decoding="async" />
-            </div>
-            <h2>优秀作品奖</h2>
-          </article>
-          <article class="placeholder-card glass-panel reveal-card delay-1">
-            <span>+</span>
-            <strong>新增证书位</strong>
-          </article>
+
+          <div class="awards-wall" data-gallery-mount="award" data-static-count="10">
+            <!-- 原有 -->
+            <article class="award-tile glass-panel" data-aos="flip-left" data-aos-delay="0">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-1.jpg" alt="全国大学英语四级考试成绩" width="620" height="760" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">国家级 · 成绩</span>
+                <h2>国家级 · 英语四级成绩</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-up" data-aos-delay="60">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-2.jpg" alt="校级优秀个人荣誉证书" width="760" height="623" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">校级 · 荣誉</span>
+                <h2>校级 · 优秀个人</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-right" data-aos-delay="120">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-3.jpg" alt="省级中国国际大学生创新大赛银奖证书" width="760" height="623" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">省级 · 竞赛</span>
+                <h2>省级 · 创新大赛银奖</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-up" data-aos-delay="180">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-4.jpg" alt="省级蓝桥杯湖北赛区三等奖证书" width="640" height="780" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">省级 · 竞赛</span>
+                <h2>省级 · 蓝桥杯三等奖</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-left" data-aos-delay="240">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-5.jpg" alt="校级春日光影故事征文优秀作品奖证书" width="760" height="623" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">校级 · 征文</span>
+                <h2>校级 · 优秀作品奖</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-up" data-aos-delay="0">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-11-quality-scholarship.jpg" alt="校级二等综合素质奖学金荣誉证书" width="759" height="532" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">校级 · 奖学金</span>
+                <h2>校级 · 二等综素奖学金</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-right" data-aos-delay="60">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-9-scholarship-list.jpg" alt="国家级国家励志奖学金拟初审名单公示" width="592" height="760" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">国家级 · 奖学金</span>
+                <h2>国家级 · 励志奖学金</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-left" data-aos-delay="120">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-7-intern-excellent.jpg" alt="优秀实习员工荣誉证书" width="759" height="520" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">单位 · 实习</span>
+                <h2>优秀实习员工</h2>
+              </div>
+            </article>
+
+            <article class="award-tile glass-panel" data-aos="flip-up" data-aos-delay="180">
+              <div class="award-tile-media">
+                <img src="assets/card-thumbs/award-8-panda-volunteer.jpg" alt="大熊猫守护志愿者证书" width="759" height="514" loading="lazy" decoding="async" />
+              </div>
+              <div class="award-tile-body">
+                <span class="tag">国家级 · 志愿</span>
+                <h2>国家级 · 熊猫守护志愿者</h2>
+              </div>
+            </article>
+
+            <article
+              class="award-tile award-tile-add placeholder-card glass-panel gallery-upload-slot"
+              data-aos="zoom-in"
+              data-aos-delay="280"
+              data-gallery-upload="award"
+              aria-label="上传新证书"
+            >
+              <input class="gallery-file-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden />
+              <span>+</span>
+              <strong>上传证书</strong>
+              <em data-upload-status>管理员登录后点击上传</em>
+            </article>
+          </div>
         </div>
       </section>
     </main>
@@ -73,6 +181,7 @@
       <p>© <span id="year"></span> 晓染</p>
     </footer>
 
+    <script src="assets/vendor/aos/aos.js" defer></script>
     <script src="script.js" defer></script>
   </body>
 </html>
