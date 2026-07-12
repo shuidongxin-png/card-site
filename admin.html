@@ -55,12 +55,11 @@
             <div id="adminMessages" class="admin-list"></div>
           </section>
 
-          <section class="admin-card admin-card-wide glass-panel reveal-card delay-1">
+          <section class="admin-card admin-card-wide glass-panel reveal-card delay-1" hidden aria-hidden="true">
             <p class="micro">Gallery</p>
-            <h2>作品 / 证书上传</h2>
+            <h2>作品 / 证书维护</h2>
             <p class="section-note admin-gallery-note">
-              图片写入 Cloudflare R2，标题等元数据写入 D1。本地预览会先存浏览器，上线后需配置 R2 并执行
-              <code>migrations/0002_gallery.sql</code>。
+              R2 当前未启用，新增或替换图片请通过源代码和 <code>assets</code> 目录维护。
             </p>
             <div class="admin-upload-grid">
               <label class="admin-upload-card glass-panel gallery-upload-slot" data-gallery-upload="skill">
