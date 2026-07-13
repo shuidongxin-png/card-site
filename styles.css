@@ -3288,3 +3288,64 @@ footer p {
     width: 86px;
   }
 }
+
+/* Fitness v18: compact zig-zag photo route for wide screens. */
+@media (min-width: 861px) {
+  .fitness-timeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(64px, 8vw, 128px);
+    row-gap: 104px;
+    max-width: 1320px;
+  }
+
+  .fitness-node,
+  .fitness-node:nth-child(odd),
+  .fitness-node:nth-child(even) {
+    width: min(100%, 300px);
+    justify-self: center;
+  }
+
+  .fitness-node:nth-child(1) { grid-area: 1 / 1; }
+  .fitness-node:nth-child(2) { grid-area: 1 / 2; }
+  .fitness-node:nth-child(3) { grid-area: 1 / 3; }
+  .fitness-node:nth-child(4) { grid-area: 2 / 3; }
+  .fitness-node:nth-child(5) { grid-area: 2 / 2; }
+  .fitness-node:nth-child(6) { grid-area: 2 / 1; }
+  .fitness-node:nth-child(7) { grid-area: 3 / 1; }
+  .fitness-node:nth-child(8) { grid-area: 3 / 2; }
+  .fitness-node:nth-child(9) { grid-area: 3 / 3; }
+  .fitness-node:nth-child(10) { grid-area: 4 / 3; }
+
+  .fitness-timeline .fitness-node:not(:last-child)::after {
+    top: 42%;
+    right: calc(-1 * clamp(86px, 8vw, 118px));
+    bottom: auto;
+    left: auto;
+    width: clamp(86px, 8vw, 118px);
+    transform: none;
+    animation-name: fitnessArrowDrift;
+  }
+
+  .fitness-timeline .fitness-node:nth-child(3)::after,
+  .fitness-timeline .fitness-node:nth-child(6)::after,
+  .fitness-timeline .fitness-node:nth-child(9)::after {
+    top: auto;
+    right: calc(50% - 50px);
+    bottom: -94px;
+    left: auto;
+    width: 100px;
+    transform: rotate(90deg);
+    animation-name: fitnessArrowDrift;
+  }
+
+  .fitness-timeline .fitness-node:nth-child(4)::after,
+  .fitness-timeline .fitness-node:nth-child(5)::after {
+    top: 42%;
+    right: auto;
+    bottom: auto;
+    left: calc(-1 * clamp(86px, 8vw, 118px));
+    width: clamp(86px, 8vw, 118px);
+    transform: scaleX(-1);
+    animation-name: fitnessArrowDriftReverse;
+  }
+}
