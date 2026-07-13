@@ -2193,6 +2193,34 @@ button:disabled {
   gap: 12px;
 }
 
+/* Keep growing admin records from stretching the dashboard. */
+#adminUsers,
+#adminMessages {
+  max-height: min(560px, 62vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
+}
+
+#adminMessages {
+  max-height: min(500px, 56vh);
+}
+
+#adminUsers::-webkit-scrollbar,
+#adminMessages::-webkit-scrollbar {
+  width: 8px;
+}
+
+#adminUsers::-webkit-scrollbar-thumb,
+#adminMessages::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(202, 238, 255, 0.5);
+  background-clip: padding-box;
+}
+
 .admin-item {
   min-width: 0;
   display: flex;
@@ -2421,6 +2449,11 @@ footer p {
 @media (max-width: 720px) {
   body {
     background: #07101f;
+  }
+
+  #adminUsers,
+  #adminMessages {
+    max-height: min(54svh, 440px);
   }
 
   body::before {
