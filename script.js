@@ -851,6 +851,7 @@ function renderAdminGallery(items) {
         <div>
           <strong>${escapeHtml(item.title)}</strong>
           <span>${escapeHtml(item.kind)} · ${escapeHtml(item.tag || "")}</span>
+          <p>${escapeHtml(item.description || "介绍待补充")}</p>
         </div>
         ${
           adminAccess || isStaticPreview()
@@ -1249,7 +1250,7 @@ function renderGalleryCard(item, kind, index) {
         <div class="poster-caption">
           <span class="tag">${escapeHtml(item.tag || "作品")}</span>
           <h2>${escapeHtml(item.title)}</h2>
-          ${item.description ? `<p>${escapeHtml(item.description)}</p>` : ""}
+          <p>${escapeHtml(item.description || "介绍待补充")}</p>
           ${deleteBtn}
         </div>
       </article>
@@ -1264,6 +1265,7 @@ function renderGalleryCard(item, kind, index) {
       <div class="award-tile-body">
         <span class="tag">${escapeHtml(item.tag || "证书")}</span>
         <h2>${escapeHtml(item.title)}</h2>
+        <p>${escapeHtml(item.description || "介绍待补充")}</p>
         ${deleteBtn}
       </div>
     </article>
@@ -1353,13 +1355,18 @@ async function uploadGalleryItem(kind, file, slot) {
     return;
   }
 
-  setText(status, "上传中…");
-  slot.classList.add("is-uploading");
-
   const titleDefault = file.name.replace(/\.[^.]+$/, "").slice(0, 40) || (kind === "skill" ? "新作品" : "新证书");
   const title = window.prompt("标题", titleDefault) || titleDefault;
   const tag = window.prompt("标签", kind === "skill" ? "作品" : "证书") || (kind === "skill" ? "作品" : "证书");
-  const description = kind === "skill" ? window.prompt("简介（可留空）", "") || "" : "";
+  const description = window.prompt("介绍（必填）", "")?.trim();
+
+  if (!description) {
+    setText(status, "请填写介绍后再上传");
+    return;
+  }
+
+  setText(status, "上传中…");
+  slot.classList.add("is-uploading");
 
   try {
     const form = new FormData();

@@ -80,6 +80,10 @@ export async function onRequestPost({ request, env }) {
     return json({ error: "请填写标题。" }, 400);
   }
 
+  if (!description) {
+    return json({ error: "请填写介绍。" }, 400);
+  }
+
   if (!file || typeof file === "string" || !file.stream) {
     return json({ error: "请选择图片文件。" }, 400);
   }

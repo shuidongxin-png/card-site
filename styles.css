@@ -1379,6 +1379,14 @@ audio {
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+.admin-gallery-item p {
+  margin: 4px 0 0;
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 @media (max-width: 720px) {
   .admin-upload-grid {
     grid-template-columns: 1fr;
@@ -1628,6 +1636,14 @@ audio {
   font-size: 18px;
   font-weight: 900;
   line-height: 1.25;
+}
+
+.award-tile-body p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
 }
 
 .award-tile-add {
@@ -3235,13 +3251,13 @@ footer p {
   grid-template-columns: minmax(0, 1fr);
   gap: clamp(66px, 7vw, 82px);
   width: 100%;
-  max-width: 760px;
+  max-width: 720px;
   margin: 0 auto;
   overflow: visible;
 }
 
 .fitness-node {
-  width: min(82%, 600px);
+  width: min(74%, 500px);
 }
 
 .fitness-node:nth-child(odd) {
