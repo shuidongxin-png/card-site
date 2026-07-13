@@ -2074,6 +2074,7 @@ button:disabled {
   display: grid;
   grid-template-columns: minmax(280px, 0.76fr) minmax(0, 1fr);
   gap: 22px;
+  align-items: start;
 }
 
 .message-layout > * {
@@ -2085,6 +2086,23 @@ button:disabled {
   display: grid;
   gap: 12px;
   margin-top: 18px;
+  max-height: min(520px, 58vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
+}
+
+.message-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(202, 238, 255, 0.5);
+  background-clip: padding-box;
 }
 
 .message-item {
@@ -2452,7 +2470,8 @@ footer p {
   }
 
   #adminUsers,
-  #adminMessages {
+  #adminMessages,
+  .message-list {
     max-height: min(54svh, 440px);
   }
 
